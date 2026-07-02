@@ -31,9 +31,9 @@ kiwisolver==1.5.0
 MarkupSafe==3.0.3
 matplotlib==3.11.0
 narwhals==2.23.0
-numpy==2.5.0
+numpy==1.26.4
 packaging==26.2
-pandas==3.0.3
+pandas==2.2.3
 pillow==12.3.0
 plotly==6.8.0
 protobuf==7.35.1
@@ -50,8 +50,8 @@ python-multipart==0.0.32
 referencing==0.37.0
 requests==2.34.2
 rpds-py==2026.6.3
-scikit-learn==1.9.0
-scipy==1.18.0
+scikit-learn==1.4.2
+scipy==1.11.0
 six==1.17.0
 smmap==5.0.3
 SQLAlchemy==2.0.51
