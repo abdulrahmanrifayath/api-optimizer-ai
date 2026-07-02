@@ -2,6 +2,7 @@ databases:
   - name: api-optimizer-ai-db
     databaseName: apioptimizer
     user: apioptimizer
+    plan: free
 
 services:
   - type: web
