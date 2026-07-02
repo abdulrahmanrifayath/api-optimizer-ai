@@ -14,10 +14,6 @@ from backend.routes.ai_routes import router as ai_router
 from backend.middleware.api_logger import ApiLoggerMiddleware
 
 
-# Create DB tables
-Base.metadata.create_all(bind=engine)
-
-
 app = FastAPI(
     title="API Optimizer AI",
     version="1.0.0"
@@ -40,6 +36,11 @@ app.add_middleware(
 # Routes
 app.include_router(user_router)
 app.include_router(ai_router)
+
+
+@app.on_event("startup")
+def startup_event():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")

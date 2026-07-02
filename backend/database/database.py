@@ -5,9 +5,20 @@ import os
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///./app.db"
 
-engine = create_engine(DATABASE_URL)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+connect_args = {}
+engine_kwargs = {"pool_pre_ping": True}
+
+if DATABASE_URL.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+elif DATABASE_URL.startswith("postgresql"):
+    connect_args["sslmode"] = "require"
+
+engine = create_engine(DATABASE_URL, **engine_kwargs, connect_args=connect_args)
 
 SessionLocal = sessionmaker(
     autocommit=False,

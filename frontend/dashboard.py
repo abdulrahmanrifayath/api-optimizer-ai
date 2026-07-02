@@ -17,14 +17,24 @@ st.title("🚀 API Optimizer AI Dashboard")
 # -------------------------
 @st.cache_data
 def load_users():
-    res = requests.get(f"{API_URL}/users/")
-    return res.json()
+    try:
+        res = requests.get(f"{API_URL}/users/", timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception:
+        st.warning("Backend API is unavailable. Make sure the backend service is running.")
+        return []
 
 
 @st.cache_data
 def load_ai():
-    res = requests.get(f"{API_URL}/ai/insights")
-    return res.json()
+    try:
+        res = requests.get(f"{API_URL}/ai/insights", timeout=10)
+        res.raise_for_status()
+        return res.json()
+    except Exception:
+        st.warning("AI insights endpoint is unavailable.")
+        return []
 
 
 # -------------------------
