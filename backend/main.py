@@ -8,8 +8,13 @@ from backend.database.database import Base, engine
 import backend.models.user
 import backend.models.api_log
 
+# Routes
 from backend.routes.user_routes import router as user_router
 from backend.routes.ai_routes import router as ai_router
+
+# 🔥 NEW: Auth routes (JWT login system)
+from backend.auth.auth_routes import router as auth_router
+
 from backend.middleware.api_logger import ApiLoggerMiddleware
 
 app = FastAPI(
@@ -34,10 +39,13 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(ai_router)
 
+# 🔥 NEW: Auth router
+app.include_router(auth_router)
+
 
 @app.on_event("startup")
 def startup():
-    # 🔥 THIS CREATES TABLES
+    # Creates tables automatically
     Base.metadata.create_all(bind=engine)
 
 
