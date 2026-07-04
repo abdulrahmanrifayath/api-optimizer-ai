@@ -3,74 +3,57 @@ from collections import defaultdict
 
 def detect_anomalies(logs):
     """
-    Detect unusual API behavior patterns
+    AI-powered anomaly detection (improved version)
     """
 
     if not logs:
         return []
 
-    endpoint_counts = defaultdict(int)
-    error_counts = defaultdict(int)
-    response_times = defaultdict(list)
+    endpoint_times = defaultdict(list)
+    anomalies = []
 
-    total_errors = 0
-
-    # -----------------------------
-    # COLLECT DATA
-    # -----------------------------
+    # -------------------------
+    # GROUP RESPONSE TIMES
+    # -------------------------
     for log in logs:
-        endpoint = log.endpoint
-
-        endpoint_counts[endpoint] += 1
-
-        if log.status_code >= 400:
-            error_counts[endpoint] += 1
-            total_errors += 1
-
         if log.response_time:
-            response_times[endpoint].append(log.response_time)
+            endpoint_times[log.endpoint].append(log.response_time)
 
-    total_requests = len(logs)
-    error_rate = (total_errors / total_requests) * 100
+    # -------------------------
+    # CALCULATE THRESHOLDS
+    # -------------------------
+    for endpoint, times in endpoint_times.items():
 
-    alerts = []
+        avg_time = sum(times) / len(times)
+        max_time = max(times)
 
-    # -----------------------------
-    # 1. HIGH ERROR RATE ALERT
-    # -----------------------------
-    if error_rate > 20:
-        alerts.append({
-            "type": "critical",
-            "message": f"High system error rate detected: {round(error_rate, 2)}%",
-            "recommendation": "Investigate backend stability immediately"
-        })
-
-    # -----------------------------
-    # 2. ENDPOINT ABUSE DETECTION
-    # -----------------------------
-    for endpoint, count in endpoint_counts.items():
-        if count > (total_requests * 0.4):
-            alerts.append({
-                "type": "warning",
-                "message": f"Unusual traffic spike on {endpoint}",
-                "recommendation": "Consider rate limiting or caching"
+        # SPIKE detection (key upgrade)
+        if max_time > avg_time * 3 and max_time > 2:
+            anomalies.append({
+                "type": "critical",
+                "message": f"Performance spike detected on {endpoint}",
+                "recommendation": "Check database queries or external API calls"
             })
 
-    # -----------------------------
-    # 3. SLOW ENDPOINT DETECTION
-    # -----------------------------
-    for endpoint, times in response_times.items():
-        if times:
-            avg_time = sum(times) / len(times)
+        # SLOW endpoint detection
+        if avg_time > 2:
+            anomalies.append({
+                "type": "warning",
+                "message": f"Slow endpoint detected: {endpoint}",
+                "recommendation": "Optimize response time using caching or indexing"
+            })
 
-            if avg_time > 1.0:
-                alerts.append({
-                    "type": "warning",
-                    "message": f"Slow response detected on {endpoint} ({round(avg_time, 2)}s)",
-                    "recommendation": "Optimize database queries or add caching"
-                })
+    # -------------------------
+    # ERROR RATE ANOMALY
+    # -------------------------
+    error_count = sum(1 for log in logs if log.status_code >= 400)
+    error_rate = (error_count / len(logs)) * 100
 
-    # -----------------------------
-    # OUTPUT
-    # -----------------------------
-    return alerts
+    if error_rate > 10:
+        anomalies.append({
+            "type": "critical",
+            "message": f"High error rate detected: {round(error_rate,2)}%",
+            "recommendation": "Fix backend exceptions and validation issues"
+        })
+
+    return anomalies

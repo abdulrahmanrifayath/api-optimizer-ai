@@ -34,7 +34,7 @@ def calculate_api_scores(logs):
     for log in logs:
         endpoint_count[log.endpoint] += 1
 
-        if log.status_code >= 400:
+        if log.status_code and log.status_code >= 400:
             error_count += 1
 
         total_response_time += log.response_time or 0
@@ -45,21 +45,24 @@ def calculate_api_scores(logs):
     error_rate = (error_count / total_requests) * 100
     avg_response_time = total_response_time / total_requests
 
-    most_used = max(endpoint_count, key=endpoint_count.get)
+    most_used = (
+        max(endpoint_count, key=endpoint_count.get)
+        if endpoint_count else None
+    )
 
     # ----------------------------
-    # SCORE CALCULATION (BALANCED REALISTIC)
+    # SCORE CALCULATION (BALANCED + STABLE)
     # ----------------------------
-
     score = 100
 
-    # error penalty (soft cap)
+    # error penalty (capped)
     score -= min(error_rate * 0.8, 40)
 
-    # response time penalty (log-based instead of power curve)
+    # response time penalty (safe scaling)
     if avg_response_time > 0.5:
         score -= min(avg_response_time * 2, 40)
 
+    # clamp score
     score = max(0, min(100, round(score, 2)))
 
     # ----------------------------
