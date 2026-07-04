@@ -7,7 +7,6 @@ from backend.models.api_log import ApiLog
 class ApiLoggerMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request, call_next):
-
         start_time = time.time()
 
         response = await call_next(request)
@@ -21,7 +20,7 @@ class ApiLoggerMiddleware(BaseHTTPMiddleware):
                 endpoint=str(request.url.path),
                 method=request.method,
                 status_code=response.status_code,
-                response_time=round(process_time * 1000, 2)
+                response_time=round(process_time, 4)
             )
 
             db.add(log)

@@ -11,11 +11,15 @@ import backend.models.api_log
 # Routes
 from backend.routes.user_routes import router as user_router
 from backend.routes.ai_routes import router as ai_router
-
-# 🔐 Auth routes (JWT login system)
 from backend.auth.auth_routes import router as auth_router
 
+# Middleware
 from backend.middleware.api_logger import ApiLoggerMiddleware
+
+# AI Engine imports (NEW)
+from backend.ai_engine.analyzer import fetch_logs
+from backend.ai_engine.insights import generate_insights
+
 
 app = FastAPI(
     title="API Optimizer AI",
@@ -41,15 +45,20 @@ app.add_middleware(
 # =========================
 app.include_router(user_router)
 app.include_router(ai_router)
-app.include_router(auth_router)  # 🔐 JWT AUTH ROUTES ADDED
+app.include_router(auth_router)
 
 
+# =========================
+# STARTUP EVENT
+# =========================
 @app.on_event("startup")
 def startup():
-    # Create tables automatically
     Base.metadata.create_all(bind=engine)
 
 
+# =========================
+# BASIC ROUTES
+# =========================
 @app.get("/")
 def home():
     return {"message": "API Optimizer AI Running 🚀"}
@@ -58,6 +67,19 @@ def home():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
+
+
+# =========================
+# 🤖 AI INSIGHTS ENDPOINT (NEW)
+# =========================
+@app.get("/ai/insights")
+def ai_insights():
+    logs = fetch_logs()
+
+    return {
+        "total_logs": len(logs),
+        "insights": generate_insights(logs)
+    }
 
 
 # =========================

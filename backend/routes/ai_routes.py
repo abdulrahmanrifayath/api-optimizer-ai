@@ -1,14 +1,12 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter
+from backend.ai_engine.analyzer import fetch_logs
+from backend.ai_engine.scoring import calculate_api_scores
 
-from backend.database.database import get_db
-from backend.ai.analyzer import APIAnalyzer
-
-router = APIRouter(prefix="/ai", tags=["AI Insights"])
+router = APIRouter(prefix="/ai", tags=["AI"])
 
 
 @router.get("/insights")
-def get_insights(db: Session = Depends(get_db)):
+def insights():
+    logs = fetch_logs()
 
-    analyzer = APIAnalyzer(db)
-    return analyzer.generate_insights()
+    return calculate_api_scores(logs)
