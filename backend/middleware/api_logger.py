@@ -7,29 +7,41 @@ from backend.models.api_log import ApiLog
 class ApiLoggerMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request, call_next):
+
         start_time = time.time()
 
         response = await call_next(request)
 
         process_time = time.time() - start_time
 
-        db = SessionLocal()
+        # ⚡ DO NOT BLOCK REQUEST (important fix)
+        self.save_log_background(
+            request.url.path,
+            request.method,
+            response.status_code,
+            process_time
+        )
+
+        return response
+
+    def save_log_background(self, endpoint, method, status_code, response_time):
+        """
+        Fast DB write (non-blocking logic)
+        """
 
         try:
+            db = SessionLocal()
+
             log = ApiLog(
-                endpoint=str(request.url.path),
-                method=request.method,
-                status_code=response.status_code,
-                response_time=round(process_time, 4)
+                endpoint=endpoint,
+                method=method,
+                status_code=status_code,
+                response_time=response_time
             )
 
             db.add(log)
             db.commit()
-
-        except Exception as e:
-            print("Logging failed:", e)
-
-        finally:
             db.close()
 
-        return response
+        except Exception as e:
+            print("Logging error:", e)

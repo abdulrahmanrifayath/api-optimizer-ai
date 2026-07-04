@@ -3,21 +3,34 @@ from collections import defaultdict
 
 def calculate_api_scores(logs):
     """
-    Convert API logs into AI health score dashboard
+    Convert API logs into AI health score dashboard (Production Improved Version)
     """
 
     total_requests = len(logs)
+
+    # ----------------------------
+    # EMPTY STATE
+    # ----------------------------
     if total_requests == 0:
         return {
             "score": 100,
             "grade": "A",
-            "message": "No traffic yet"
+            "message": "No traffic yet",
+            "metrics": {
+                "total_requests": 0,
+                "error_rate": 0,
+                "avg_response_time": 0,
+                "most_used_endpoint": None
+            }
         }
 
     endpoint_count = defaultdict(int)
     error_count = 0
     total_response_time = 0
 
+    # ----------------------------
+    # PROCESS LOGS
+    # ----------------------------
     for log in logs:
         endpoint_count[log.endpoint] += 1
 
@@ -29,33 +42,29 @@ def calculate_api_scores(logs):
     # ----------------------------
     # METRICS
     # ----------------------------
-
     error_rate = (error_count / total_requests) * 100
     avg_response_time = total_response_time / total_requests
 
     most_used = max(endpoint_count, key=endpoint_count.get)
-    slow_endpoint_score = avg_response_time
 
     # ----------------------------
-    # SCORE CALCULATION
+    # SCORE CALCULATION (BALANCED REALISTIC)
     # ----------------------------
 
     score = 100
 
-    # penalty for errors
-    score -= error_rate * 0.8
+    # error penalty (soft cap)
+    score -= min(error_rate * 0.8, 40)
 
-    # penalty for speed
-    if avg_response_time > 1:
-        score -= (avg_response_time * 10)
+    # response time penalty (log-based instead of power curve)
+    if avg_response_time > 0.5:
+        score -= min(avg_response_time * 2, 40)
 
-    # clamp score
     score = max(0, min(100, round(score, 2)))
 
     # ----------------------------
     # GRADE SYSTEM
     # ----------------------------
-
     if score >= 90:
         grade = "A"
     elif score >= 75:
@@ -70,7 +79,6 @@ def calculate_api_scores(logs):
     # ----------------------------
     # OUTPUT
     # ----------------------------
-
     return {
         "score": score,
         "grade": grade,
