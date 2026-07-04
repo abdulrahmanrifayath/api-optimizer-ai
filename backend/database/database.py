@@ -1,24 +1,33 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
-import os
 
-load_dotenv()
+# 🔥 FORCE correct path load
+from pathlib import Path
 
-DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///./app.db"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+dotenv_path = BASE_DIR / ".env"
 
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+load_dotenv(dotenv_path=dotenv_path)
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+print("🔥 DATABASE URL USED:", DATABASE_URL)
+
+if not DATABASE_URL:
+    raise Exception("DATABASE_URL not found in .env file")
 
 connect_args = {}
-engine_kwargs = {"pool_pre_ping": True}
 
-if DATABASE_URL.startswith("sqlite"):
+if "sqlite" in DATABASE_URL:
     connect_args["check_same_thread"] = False
-elif DATABASE_URL.startswith("postgresql"):
-    connect_args["sslmode"] = "require"
 
-engine = create_engine(DATABASE_URL, **engine_kwargs, connect_args=connect_args)
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    connect_args=connect_args
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -27,7 +36,6 @@ SessionLocal = sessionmaker(
 )
 
 Base = declarative_base()
-
 
 def get_db():
     db = SessionLocal()

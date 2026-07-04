@@ -1,29 +1,27 @@
 import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database.database import Base, engine
 
+# IMPORTANT: import ALL models BEFORE create_all
 import backend.models.user
 import backend.models.api_log
 
 from backend.routes.user_routes import router as user_router
 from backend.routes.ai_routes import router as ai_router
-
 from backend.middleware.api_logger import ApiLoggerMiddleware
-
 
 app = FastAPI(
     title="API Optimizer AI",
     version="1.0.0"
 )
 
-
-# Middleware (API monitoring)
+# Middleware
 app.add_middleware(ApiLoggerMiddleware)
 
 origins = os.getenv("CORS_ORIGINS", "*").split(",")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins if origins != [""] else ["*"],
@@ -32,14 +30,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Routes
 app.include_router(user_router)
 app.include_router(ai_router)
 
 
 @app.on_event("startup")
-def startup_event():
+def startup():
+    # 🔥 THIS CREATES TABLES
     Base.metadata.create_all(bind=engine)
 
 
@@ -53,17 +51,14 @@ def health():
     return {"status": "healthy"}
 
 
-# -----------------------------
-# CLOUD DEPLOYMENT ENTRY POINT
-# -----------------------------
 if __name__ == "__main__":
     import uvicorn
-    import os
 
     port = int(os.environ.get("PORT", 8000))
 
     uvicorn.run(
         "backend.main:app",
         host="0.0.0.0",
-        port=port
+        port=port,
+        reload=True
     )
