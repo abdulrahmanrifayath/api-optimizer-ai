@@ -12,7 +12,7 @@ import backend.models.api_log
 from backend.routes.user_routes import router as user_router
 from backend.routes.ai_routes import router as ai_router
 
-# 🔥 NEW: Auth routes (JWT login system)
+# 🔐 Auth routes (JWT login system)
 from backend.auth.auth_routes import router as auth_router
 
 from backend.middleware.api_logger import ApiLoggerMiddleware
@@ -25,6 +25,7 @@ app = FastAPI(
 # Middleware
 app.add_middleware(ApiLoggerMiddleware)
 
+# CORS setup
 origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
@@ -35,17 +36,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes
+# =========================
+# ROUTES REGISTRATION
+# =========================
 app.include_router(user_router)
 app.include_router(ai_router)
-
-# 🔥 NEW: Auth router
-app.include_router(auth_router)
+app.include_router(auth_router)  # 🔐 JWT AUTH ROUTES ADDED
 
 
 @app.on_event("startup")
 def startup():
-    # Creates tables automatically
+    # Create tables automatically
     Base.metadata.create_all(bind=engine)
 
 
@@ -59,6 +60,9 @@ def health():
     return {"status": "healthy"}
 
 
+# =========================
+# RUN SERVER (DEV)
+# =========================
 if __name__ == "__main__":
     import uvicorn
 
