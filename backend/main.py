@@ -4,19 +4,32 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database.database import Base, engine
 
-# IMPORTANT: import ALL models BEFORE create_all
+# =========================
+# MODELS (IMPORTANT)
+# =========================
 import backend.models.user
 import backend.models.api_log
 
-# Routes
+# =========================
+# ROUTES
+# =========================
 from backend.routes.user_routes import router as user_router
 from backend.routes.ai_routes import router as ai_router
 from backend.auth.auth_routes import router as auth_router
 
-# Middleware
+# =========================
+# WEBSOCKET ROUTES (ADDED)
+# =========================
+from backend.routes.ws_routes import router as ws_router
+
+# =========================
+# MIDDLEWARE
+# =========================
 from backend.middleware.api_logger import ApiLoggerMiddleware
 
-# AI Engine imports (NEW)
+# =========================
+# AI ENGINE
+# =========================
 from backend.ai_engine.analyzer import fetch_logs
 from backend.ai_engine.insights import generate_insights
 
@@ -26,10 +39,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Middleware
+# =========================
+# MIDDLEWARE
+# =========================
 app.add_middleware(ApiLoggerMiddleware)
 
-# CORS setup
+# =========================
+# CORS SETUP
+# =========================
 origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
@@ -41,12 +58,14 @@ app.add_middleware(
 )
 
 # =========================
-# ROUTES REGISTRATION
+# REGISTER ROUTES
 # =========================
 app.include_router(user_router)
 app.include_router(ai_router)
 app.include_router(auth_router)
 
+# ✅ WEBSOCKET ROUTE ENABLED
+app.include_router(ws_router)
 
 # =========================
 # STARTUP EVENT
@@ -54,7 +73,6 @@ app.include_router(auth_router)
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)
-
 
 # =========================
 # BASIC ROUTES
@@ -68,9 +86,8 @@ def home():
 def health():
     return {"status": "healthy"}
 
-
 # =========================
-# 🤖 AI INSIGHTS ENDPOINT (NEW)
+# AI INSIGHTS ENDPOINT
 # =========================
 @app.get("/ai/insights")
 def ai_insights():
@@ -80,7 +97,6 @@ def ai_insights():
         "total_logs": len(logs),
         "insights": generate_insights(logs)
     }
-
 
 # =========================
 # RUN SERVER (DEV)
