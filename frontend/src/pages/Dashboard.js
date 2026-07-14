@@ -17,6 +17,7 @@ import LiveRequestFeed from "../components/LiveRequestFeed";
 import TrafficPrediction from "../components/TrafficPrediction";
 import AIRiskAnalyzer from "../components/AIRiskAnalyzer";
 import HealthTimeline from "../components/HealthTimeline";
+import OptimizationAdvisor from "../components/OptimizationAdvisor";
 
 
 import RequestChart from "../charts/RequestChart";
@@ -222,6 +223,12 @@ function Dashboard({
           ========================== */}
 
           <AIInsights dashboard={dashboard} />
+
+          {/* =========================
+              Optmization Advisor
+          ========================== */}
+
+          <OptimizationAdvisor />
 
           {/* =========================
               Notification Panel

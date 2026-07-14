@@ -6,6 +6,10 @@ from backend.ml.predictor import predict_next_hour
 
 from backend.services.prediction_service import PredictionService
 
+from backend.services.anomaly_service import AnomalyService
+
+from backend.services.optimization_service import OptimizationService
+
 from backend.ai_engine.analyzer import fetch_logs
 from backend.ai_engine.scoring import calculate_api_scores
 from backend.ai_engine.anomaly import detect_anomalies
@@ -64,3 +68,19 @@ def predict_traffic():
         "recommendation": recommendation
 
     }
+
+@router.get("/detect-anomaly")
+def detect_anomaly():
+
+    service = AnomalyService()
+
+    result = service.detect()
+
+    return result
+
+@router.get("/optimization-advisor")
+def optimization_advisor():
+
+    service = OptimizationService()
+
+    return service.get_recommendations()

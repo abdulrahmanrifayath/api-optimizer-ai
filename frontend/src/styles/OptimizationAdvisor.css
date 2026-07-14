@@ -1,0 +1,137 @@
+.advisor-card {
+    margin-top: 30px;
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+.advisor-summary {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.priority {
+    padding: 8px 18px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+.priority.low {
+    background: #16a34a;
+}
+
+.priority.high {
+    background: #ea580c;
+}
+
+.priority.critical {
+    background: #dc2626;
+}
+
+.recommendation {
+    margin-top: 20px;
+    padding: 15px;
+    border-left: 5px solid #2563eb;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.impact {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.recommendation-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:10px;
+
+}
+
+.recommendation-details{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-top:15px;
+
+    padding-top:15px;
+
+    border-top:1px solid #e5e7eb;
+
+}
+
+.recommendation-details div{
+
+    flex:1;
+
+}
+
+.impact-badge{
+
+    padding:6px 14px;
+
+    border-radius:20px;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+}
+
+.impact-badge.none{
+
+    background:#64748b;
+
+}
+
+.impact-badge.low{
+
+    background:#16a34a;
+
+}
+
+.impact-badge.medium{
+
+    background:#f59e0b;
+
+}
+
+.impact-badge.high{
+
+    background:#ea580c;
+
+}
+
+.impact-badge.critical{
+
+    background:#dc2626;
+
+}
+
+.recommendation{
+
+    transition:0.3s;
+
+}
+
+.recommendation:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
