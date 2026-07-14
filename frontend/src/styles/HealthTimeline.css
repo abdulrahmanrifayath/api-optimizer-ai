@@ -1,0 +1,81 @@
+.timeline-card{
+
+    margin-top:30px;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:16px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+.timeline{
+
+    margin-top:25px;
+
+}
+
+.timeline-item{
+
+    display:flex;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.timeline-dot{
+
+    width:18px;
+
+    height:18px;
+
+    border-radius:50%;
+
+    margin-right:20px;
+
+}
+
+.timeline-content{
+
+    flex:1;
+
+    border-left:3px solid #ddd;
+
+    padding-left:20px;
+
+}
+
+.timeline-content h4{
+
+    margin-bottom:5px;
+
+}
+
+.timeline-content p{
+
+    color:#64748b;
+
+}
+
+.healthy{
+
+    background:#16a34a;
+
+}
+
+.warning{
+
+    background:#f59e0b;
+
+}
+
+.critical{
+
+    background:#dc2626;
+
+}

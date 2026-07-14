@@ -1,0 +1,75 @@
+.live-feed{
+
+    margin-top:30px;
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:16px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+.live-feed table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    margin-top:20px;
+
+}
+
+.live-feed th{
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:14px;
+
+}
+
+.live-feed td{
+
+    padding:12px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.live-feed tr:hover{
+
+    background:#f8fafc;
+
+}
+
+.status-success{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+}
+
+.status-error{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+}

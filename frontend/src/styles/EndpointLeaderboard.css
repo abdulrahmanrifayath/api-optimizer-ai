@@ -1,0 +1,52 @@
+.leaderboard-card{
+    margin-top:30px;
+    background:white;
+    padding:25px;
+    border-radius:16px;
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+}
+
+.leaderboard-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.leaderboard-table th{
+    background:#2563eb;
+    color:white;
+    padding:14px;
+}
+
+.leaderboard-table td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+}
+
+.leaderboard-table tr:hover{
+    background:#f8fafc;
+}
+
+.healthy{
+    background:#dcfce7;
+    color:#15803d;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.progress{
+    width:120px;
+    height:10px;
+    background:#e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+    display:inline-block;
+    margin-right:10px;
+}
+
+.progress-fill{
+    height:100%;
+    background:#2563eb;
+}

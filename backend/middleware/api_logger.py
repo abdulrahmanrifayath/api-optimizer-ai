@@ -12,7 +12,7 @@ class ApiLoggerMiddleware(BaseHTTPMiddleware):
 
         response = await call_next(request)
 
-        process_time = time.time() - start_time
+        process_time = round(time.time() - start_time, 4)
 
         # ⚡ DO NOT BLOCK REQUEST (important fix)
         self.save_log_background(
@@ -41,6 +41,7 @@ class ApiLoggerMiddleware(BaseHTTPMiddleware):
 
             db.add(log)
             db.commit()
+            db.refresh(log)
             db.close()
 
         except Exception as e:
