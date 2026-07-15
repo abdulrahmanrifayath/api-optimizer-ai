@@ -216,6 +216,64 @@ function ActionCenter() {
                         📈 {simulation.improvement}
 
                     </div>
+                    
+                    <div className="simulation-extra">
+
+    <div className="implementation-card">
+
+        <h3>🛠 Implementation Guide</h3>
+
+        <ul>
+
+            {simulation.implementation.map((step, index) => (
+
+                <li key={index}>
+
+                    ✅ {step}
+
+                </li>
+
+            ))}
+
+        </ul>
+
+    </div>
+
+    <div className="risk-card">
+
+        <h3>⚠ Risk Assessment</h3>
+
+        <p>
+
+            <strong>Risk:</strong> {simulation.risk}
+
+        </p>
+
+        <p>
+
+            <strong>Estimated Time:</strong> {simulation.estimated_time}
+
+        </p>
+
+        <p>
+
+            <strong>Estimated Cost:</strong> {simulation.estimated_cost}
+
+        </p>
+
+        <p>
+
+            <strong>Rollback:</strong>
+
+            <br />
+
+            {simulation.rollback}
+
+        </p>
+
+    </div>
+
+</div>
 
                 </div>
 
