@@ -1,52 +1,47 @@
 import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database.database import Base, engine
 
-# =========================
-# MODELS (IMPORTANT)
-# =========================
-import backend.models.user
+# Import models so SQLAlchemy creates the tables
 import backend.models.api_log
+import backend.models.user
 
-# =========================
-# ROUTES
-# =========================
-from backend.routes.user_routes import router as user_router
-from backend.routes.ai_routes import router as ai_router
+# Routes
 from backend.auth.auth_routes import router as auth_router
-
-# =========================
-# WEBSOCKET ROUTES (ADDED)
-# =========================
+from backend.routes.ai_routes import router as ai_router
+from backend.routes.user_routes import router as user_router
 from backend.routes.ws_routes import router as ws_router
 
-# =========================
-# MIDDLEWARE
-# =========================
+# Middleware
 from backend.middleware.api_logger import ApiLoggerMiddleware
 
-# =========================
-# AI ENGINE
-# =========================
+# AI Engine
 from backend.ai_engine.analyzer import fetch_logs
 from backend.ai_engine.insights import generate_insights
 
 
+# ==========================================================
+# FastAPI Application
+# ==========================================================
 app = FastAPI(
     title="API Optimizer AI",
-    version="1.0.0"
+    description="AI-Powered API Monitoring and Optimization Platform",
+    version="1.0.0",
 )
 
-# =========================
-# MIDDLEWARE
-# =========================
+
+# ==========================================================
+# Middleware
+# ==========================================================
 app.add_middleware(ApiLoggerMiddleware)
 
-# =========================
-# CORS SETUP
-# =========================
+
+# ==========================================================
+# CORS Configuration
+# ==========================================================
 origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
@@ -57,50 +52,68 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# =========================
-# REGISTER ROUTES
-# =========================
+
+# ==========================================================
+# Register API Routes
+# ==========================================================
+app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(ai_router)
-app.include_router(auth_router)
-
-# ✅ WEBSOCKET ROUTE ENABLED
 app.include_router(ws_router)
 
-# =========================
-# STARTUP EVENT
-# =========================
+
+# ==========================================================
+# Startup Event
+# ==========================================================
 @app.on_event("startup")
 def startup():
+    """
+    Create database tables when the application starts.
+    """
     Base.metadata.create_all(bind=engine)
 
-# =========================
-# BASIC ROUTES
-# =========================
+
+# ==========================================================
+# Root Endpoint
+# ==========================================================
 @app.get("/")
 def home():
+    """
+    Verify that the backend server is running.
+    """
     return {"message": "API Optimizer AI Running 🚀"}
 
 
+# ==========================================================
+# Health Check
+# ==========================================================
 @app.get("/health")
 def health():
+    """
+    Basic application health check.
+    """
     return {"status": "healthy"}
 
-# =========================
-# AI INSIGHTS ENDPOINT
-# =========================
+
+# ==========================================================
+# AI Insights
+# ==========================================================
 @app.get("/ai/insights")
 def ai_insights():
+    """
+    Generate AI-powered insights from the collected API logs.
+    """
     logs = fetch_logs()
 
     return {
         "total_logs": len(logs),
-        "insights": generate_insights(logs)
+        "insights": generate_insights(logs),
     }
 
-# =========================
-# RUN SERVER (DEV)
-# =========================
+
+# ==========================================================
+# Development Server
+# ==========================================================
 if __name__ == "__main__":
     import uvicorn
 
@@ -110,5 +123,5 @@ if __name__ == "__main__":
         "backend.main:app",
         host="0.0.0.0",
         port=port,
-        reload=True
+        reload=True,
     )

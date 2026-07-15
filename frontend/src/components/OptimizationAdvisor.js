@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import "../styles/OptimizationAdvisor.css";
+
 function OptimizationAdvisor() {
 
     const [advisor, setAdvisor] = useState(null);
@@ -61,7 +62,9 @@ function OptimizationAdvisor() {
 
                     <h4>Priority</h4>
 
-                    <span className={`priority ${advisor.priority.toLowerCase()}`}>
+                    <span
+                        className={`priority ${advisor.priority.toLowerCase()}`}
+                    >
                         {advisor.priority}
                     </span>
 
@@ -71,50 +74,74 @@ function OptimizationAdvisor() {
 
             <div className="recommendations">
 
-    {advisor.recommendations.map((item, index) => (
+                {advisor.recommendations.map((item, index) => (
 
-        <div
-            key={index}
-            className="recommendation"
-        >
+                    <div
+                        key={index}
+                        className="recommendation"
+                    >
 
-            <div className="recommendation-header">
+                        <h3>{item.title}</h3>
 
-                <h3>{item.title}</h3>
+                        <p>
+                            <strong>Reason</strong>
+                            <br />
+                            {item.reason}
+                        </p>
 
-                <span className={`impact-badge ${item.impact.toLowerCase()}`}>
-                    {item.impact}
-                </span>
+                        <p>
+                            <strong>AI Explanation</strong>
+                            <br />
+                            {item.ai_explanation}
+                        </p>
+
+                        <div className="advisor-grid">
+
+                            <div>
+                                <strong>Model</strong>
+                                <br />
+                                {item.model}
+                            </div>
+
+                            <div>
+                                <strong>Confidence</strong>
+                                <br />
+                                {item.confidence}%
+                            </div>
+
+                            <div>
+                                <strong>Expected Improvement</strong>
+                                <br />
+                                {item.expected_improvement}
+                            </div>
+
+                        </div>
+
+                        <div className="trigger-box">
+
+                            <strong>Trigger</strong>
+
+                            <p>
+
+                                {item.trigger?.metric}
+
+                                <br />
+
+                                Current: {item.trigger?.current_value}
+
+                                <br />
+
+                                Threshold: {item.trigger?.threshold}
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                ))}
 
             </div>
-
-            <p>{item.reason}</p>
-
-            <div className="recommendation-details">
-
-                <div>
-
-                    <strong>🎯 Confidence</strong>
-
-                    <p>{item.confidence}%</p>
-
-                </div>
-
-                <div>
-
-                    <strong>📈 Expected Improvement</strong>
-
-                    <p>{item.expected_improvement}</p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    ))}
-
-</div>
 
         </div>
 

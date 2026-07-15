@@ -1,0 +1,38 @@
+.history-card {
+    background: white;
+    padding: 25px;
+    margin-top: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.chart-section {
+    margin-top: 40px;
+}
+
+.chart-section h3 {
+    margin-bottom: 15px;
+    color: #1e3a8a;
+}
+
+.ai-analysis-card {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 15px;
+    border-left: 6px solid #2563eb;
+}
+
+.analysis-box {
+    margin-top: 20px;
+}
+
+.analysis-box h4 {
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.analysis-box p {
+    color: #374151;
+    line-height: 1.6;
+}

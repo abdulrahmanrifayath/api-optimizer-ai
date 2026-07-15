@@ -18,7 +18,8 @@ import TrafficPrediction from "../components/TrafficPrediction";
 import AIRiskAnalyzer from "../components/AIRiskAnalyzer";
 import HealthTimeline from "../components/HealthTimeline";
 import OptimizationAdvisor from "../components/OptimizationAdvisor";
-
+import HistoryDashboard from "../components/HistoryDashboard";
+import ActionCenter from "../components/ActionCenter";
 
 import RequestChart from "../charts/RequestChart";
 import EndpointPieChart from "../charts/EndpointPieChart";
@@ -229,6 +230,17 @@ function Dashboard({
           ========================== */}
 
           <OptimizationAdvisor />
+
+           {/* =========================
+              Action Center
+          ========================== */}
+          <ActionCenter />
+
+          {/* =========================
+              History Dashboard
+          ========================== */}
+
+          <HistoryDashboard />
 
           {/* =========================
               Notification Panel
