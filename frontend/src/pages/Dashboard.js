@@ -20,6 +20,10 @@ import HealthTimeline from "../components/HealthTimeline";
 import OptimizationAdvisor from "../components/OptimizationAdvisor";
 import HistoryDashboard from "../components/HistoryDashboard";
 import ActionCenter from "../components/ActionCenter";
+import ExportCenter from "../components/ExportCenter";
+import ExecutiveDashboard from "../components/ExecutiveDashboard";
+import BenchmarkDashboard from "../components/BenchmarkDashboard";
+import ExecutiveReport from "../components/ExecutiveReport";
 
 import RequestChart from "../charts/RequestChart";
 import EndpointPieChart from "../charts/EndpointPieChart";
@@ -235,6 +239,30 @@ function Dashboard({
               Action Center
           ========================== */}
           <ActionCenter />
+
+           {/* =========================
+              Export Center
+          ========================== */}
+
+          <ExportCenter />
+
+          {/* =========================
+              Executive Dashboard
+          ========================== */}
+
+          <ExecutiveDashboard />
+
+           {/* =========================
+              Executive Report
+          ========================== */}
+
+          <ExecutiveReport />
+
+          {/* =========================
+              BenchMark Dashboard
+          ========================== */}
+          
+            <BenchmarkDashboard />
 
           {/* =========================
               History Dashboard

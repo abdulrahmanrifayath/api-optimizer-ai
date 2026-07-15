@@ -89,53 +89,91 @@ function OptimizationAdvisor() {
                             {item.reason}
                         </p>
 
-                        <p>
-                            <strong>AI Explanation</strong>
-                            <br />
-                            {item.ai_explanation}
-                        </p>
-
                         <div className="advisor-grid">
 
                             <div>
-                                <strong>Model</strong>
-                                <br />
-                                {item.model}
-                            </div>
 
-                            <div>
-                                <strong>Confidence</strong>
+                                <strong>🎯 Confidence</strong>
+
                                 <br />
+
                                 {item.confidence}%
+
                             </div>
 
                             <div>
-                                <strong>Expected Improvement</strong>
+
+                                <strong>📈 Expected Improvement</strong>
+
                                 <br />
+
                                 {item.expected_improvement}
+
                             </div>
 
                         </div>
 
-                        <div className="trigger-box">
+                        {item.explanation && (
 
-                            <strong>Trigger</strong>
+                            <div className="ai-explanation">
 
-                            <p>
+                                <h4>🧠 AI Decision Explanation</h4>
 
-                                {item.trigger?.metric}
+                                <div className="explanation-grid">
 
-                                <br />
+                                    <div>
 
-                                Current: {item.trigger?.current_value}
+                                        <strong>Model</strong>
 
-                                <br />
+                                        <p>{item.explanation.model}</p>
 
-                                Threshold: {item.trigger?.threshold}
+                                    </div>
 
-                            </p>
+                                    <div>
 
-                        </div>
+                                        <strong>Decision Score</strong>
+
+                                        <p>{item.explanation.decision_score}/100</p>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>Trigger Metric</strong>
+
+                                        <p>{item.explanation.metric}</p>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>Current Value</strong>
+
+                                        <p>{item.explanation.current_value}</p>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong>Threshold</strong>
+
+                                        <p>{item.explanation.threshold}</p>
+
+                                    </div>
+
+                                </div>
+
+                                <div className="analysis-box">
+
+                                    <strong>Analysis</strong>
+
+                                    <p>{item.explanation.analysis}</p>
+
+                                </div>
+
+                            </div>
+
+                        )}
 
                     </div>
 

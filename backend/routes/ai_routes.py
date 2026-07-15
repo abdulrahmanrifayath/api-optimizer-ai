@@ -1,23 +1,32 @@
 from fastapi import APIRouter, HTTPException
-
-from backend.services.prediction_service import PredictionService
-from backend.services.anomaly_service import AnomalyService
-from backend.services.optimization_service import OptimizationService
-from backend.services.history_service import HistoryService
-from backend.services.action_service import ActionService
-from backend.services.simulation_service import SimulationService
+from fastapi.responses import Response
 
 from backend.ai_engine.analyzer import fetch_logs
-from backend.ai_engine.scoring import calculate_api_scores
 from backend.ai_engine.anomaly import detect_anomalies
+from backend.ai_engine.scoring import calculate_api_scores
 from backend.ai_engine.traffic import get_traffic_insights
 
+from backend.services.action_service import ActionService
+from backend.services.analytics_service import AnalyticsService
+from backend.services.anomaly_service import AnomalyService
+from backend.services.export_service import ExportService
+from backend.services.history_service import HistoryService
+from backend.services.optimization_service import OptimizationService
+from backend.services.pdf_export_service import PDFExportService
+from backend.services.prediction_service import PredictionService
+from backend.services.simulation_service import SimulationService
+from backend.services.executive_summary_service import ExecutiveSummaryService
+from backend.services.benchmark_service import BenchmarkService
+from backend.services.executive_report_service import ExecutiveReportService
 
-router = APIRouter(prefix="/ai", tags=["AI"])
+router = APIRouter(
+    prefix="/ai",
+    tags=["AI"]
+)
 
 
 # ==========================================================
-# Dashboard
+# AI Dashboard
 # ==========================================================
 @router.get("/dashboard")
 def ai_dashboard():
@@ -43,8 +52,7 @@ def ai_dashboard():
 @router.get("/predict-traffic")
 def predict_traffic():
     try:
-        service = PredictionService()
-        return service.get_prediction()
+        return PredictionService().get_prediction()
 
     except Exception as e:
         raise HTTPException(
@@ -59,8 +67,7 @@ def predict_traffic():
 @router.get("/detect-anomaly")
 def detect_anomaly():
     try:
-        service = AnomalyService()
-        return service.detect()
+        return AnomalyService().detect()
 
     except Exception as e:
         raise HTTPException(
@@ -70,40 +77,125 @@ def detect_anomaly():
 
 
 # ==========================================================
-# AI Optimization Advisor
+# Optimization Advisor
 # ==========================================================
 @router.get("/optimization-advisor")
 def optimization_advisor():
     try:
-        service = OptimizationService()
-        return service.get_recommendations()
+        return OptimizationService().get_recommendations()
 
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Optimization advisor failed: {str(e)}"
         )
-    
+
+
+# ==========================================================
+# Historical Metrics
+# ==========================================================
 @router.get("/history")
 def api_history():
+    return HistoryService().get_history()
 
-    service = HistoryService()
 
-    return service.get_history()
-
+# ==========================================================
+# AI Action Center
+# ==========================================================
 @router.get("/actions")
 def get_ai_actions():
-    """
-    Returns AI-powered optimization actions.
-    """
+    return ActionService().get_actions()
 
-    service = ActionService()
 
-    return service.get_actions()
-
+# ==========================================================
+# AI Simulation
+# ==========================================================
 @router.post("/simulate-action/{action_id}")
 def simulate_action(action_id: int):
+    return SimulationService().simulate(action_id)
 
-    service = SimulationService()
 
-    return service.simulate(action_id)
+# ==========================================================
+# Export JSON
+# ==========================================================
+@router.get("/export/json")
+def export_json():
+    return Response(
+        content=ExportService.export_json(),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": "attachment; filename=api_report.json"
+        },
+    )
+
+
+# ==========================================================
+# Export CSV
+# ==========================================================
+@router.get("/export/csv")
+def export_csv():
+    return Response(
+        content=ExportService.export_csv(),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=api_report.csv"
+        },
+    )
+
+
+# ==========================================================
+# Export PDF
+# ==========================================================
+@router.get("/export/pdf")
+def export_pdf():
+    pdf = PDFExportService.generate()
+
+    return Response(
+        content=pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=API_Optimizer_Report.pdf"
+        },
+    )
+
+
+# ==========================================================
+# Analytics
+# ==========================================================
+@router.get("/analytics")
+def analytics(days: int = 1):
+    return AnalyticsService().get_summary(days)
+
+@router.get("/executive-summary")
+def executive_summary():
+    return ExecutiveSummaryService().generate()
+
+
+# ==========================================================
+# Executive Report
+# ==========================================================
+
+@router.get("/executive-report")
+def executive_report():
+    """
+    Returns an AI-generated executive report.
+    """
+    try:
+        service = ExecutiveReportService()
+        return service.generate()
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Executive report generation failed: {str(e)}"
+        )
+
+        
+# ==========================================================
+# Benchmark Analytics
+# ==========================================================
+
+@router.get("/benchmark")
+def benchmark():
+
+    return BenchmarkService().get_benchmark()

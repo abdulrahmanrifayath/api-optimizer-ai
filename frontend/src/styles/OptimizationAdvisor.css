@@ -195,3 +195,61 @@ margin-bottom:15px;
 color:#1e3a8a;
 
 }
+
+.ai-explanation{
+
+    margin-top:25px;
+
+    background:#f8fafc;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    border-left:5px solid #2563eb;
+
+}
+
+.ai-explanation h4{
+
+    margin-bottom:18px;
+
+}
+
+.explanation-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.explanation-grid div{
+
+    background:white;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+.analysis-box{
+
+    background:white;
+
+    padding:18px;
+
+    border-radius:10px;
+
+    line-height:1.7;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}

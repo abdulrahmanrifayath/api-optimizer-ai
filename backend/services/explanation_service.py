@@ -1,4 +1,7 @@
 class ExplanationService:
+    """
+    Generates explainable AI responses for optimization recommendations.
+    """
 
     @staticmethod
     def explain(
@@ -9,29 +12,40 @@ class ExplanationService:
         metric,
         value,
         threshold,
-        model
+        model,
     ):
+
         return {
+
             "title": title,
 
             "reason": reason,
+
+            "impact": "High",
 
             "confidence": confidence,
 
             "expected_improvement": improvement,
 
-            "ai_explanation": (
-                f"The {model} model detected that "
-                f"{metric} reached {value}, "
-                f"which crossed the threshold of {threshold}. "
-                f"Therefore this recommendation was generated."
-            ),
+            "explanation": {
 
-            "trigger": {
+                "model": model,
+
                 "metric": metric,
-                "current_value": value,
-                "threshold": threshold
-            },
 
-            "model": model
+                "current_value": value,
+
+                "threshold": threshold,
+
+                "analysis": (
+                    f"The {model} model detected that "
+                    f"{metric} reached {value}, "
+                    f"which crossed the threshold of {threshold}. "
+                    f"Therefore this recommendation was generated."
+                ),
+
+                "decision_score": confidence
+
+            }
+
         }

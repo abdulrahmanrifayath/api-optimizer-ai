@@ -1,0 +1,55 @@
+.export-card{
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:20px;
+
+    margin-top:20px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+
+}
+
+.export-buttons{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.export-buttons button{
+
+    border:none;
+
+    padding:12px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.export-buttons button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.export-buttons button:disabled{
+
+    opacity:.5;
+
+    cursor:not-allowed;
+
+}
