@@ -8,12 +8,14 @@ from backend.database.database import Base, engine
 # Import models so SQLAlchemy creates the tables
 import backend.models.api_log
 import backend.models.user
+import backend.models.connected_api
 
 # Routes
 from backend.auth.auth_routes import router as auth_router
 from backend.routes.ai_routes import router as ai_router
 from backend.routes.user_routes import router as user_router
 from backend.routes.ws_routes import router as ws_router
+from backend.routes.connected_api_routes import router as connected_api_router
 
 # Middleware
 from backend.middleware.api_logger import ApiLoggerMiddleware
@@ -58,9 +60,9 @@ app.add_middleware(
 # ==========================================================
 app.include_router(auth_router)
 app.include_router(user_router)
+app.include_router(connected_api_router)
 app.include_router(ai_router)
 app.include_router(ws_router)
-
 
 # ==========================================================
 # Startup Event

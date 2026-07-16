@@ -1,21 +1,27 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     FaBell,
     FaMoon,
     FaSearch,
-    FaUserCircle
+    FaUserCircle,
+    FaSignOutAlt
 } from "react-icons/fa";
+
+import { useAuth } from "../auth/AuthContext";
 
 import "../styles/navbar.css";
 
 function Navbar({
-
     darkMode,
-
     setDarkMode
-
 }) {
+
     const [time, setTime] = useState("");
+
+    const navigate = useNavigate();
+
+    const { logout, user } = useAuth();
 
     useEffect(() => {
 
@@ -34,6 +40,14 @@ function Navbar({
         return () => clearInterval(interval);
 
     }, []);
+
+    const handleLogout = () => {
+
+        logout();
+
+        navigate("/login");
+
+    };
 
     return (
 
@@ -77,17 +91,11 @@ function Navbar({
                 </button>
 
                 <button
-
-                className="icon-btn"
-
-                onClick={() =>
-
-                setDarkMode(!darkMode)
-
-                }
-
+                    className="icon-btn"
+                    onClick={() => setDarkMode(!darkMode)}
                 >
-               <FaMoon />
+
+                    <FaMoon />
 
                 </button>
 
@@ -97,11 +105,21 @@ function Navbar({
 
                     <span>
 
-                        Abdul
+                        {user?.name || "User"}
 
                     </span>
 
                 </div>
+
+                <button
+                    className="icon-btn"
+                    onClick={handleLogout}
+                    title="Logout"
+                >
+
+                    <FaSignOutAlt />
+
+                </button>
 
             </div>
 
