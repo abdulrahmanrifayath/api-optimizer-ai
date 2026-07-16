@@ -2,10 +2,15 @@ from backend.services.analytics_service import AnalyticsService
 
 
 class ExecutiveSummaryService:
+    """
+    Generates an executive summary of API health.
+    """
+
+    def __init__(self):
+        self.analytics = AnalyticsService()
 
     def generate(self):
-
-        analytics = AnalyticsService().get_summary()
+        analytics = self.analytics.get_summary()
 
         success_rate = analytics["success_rate"]
         response = analytics["average_response_time"]

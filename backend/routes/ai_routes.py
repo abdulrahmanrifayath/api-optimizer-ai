@@ -18,12 +18,14 @@ from backend.services.simulation_service import SimulationService
 from backend.services.executive_summary_service import ExecutiveSummaryService
 from backend.services.benchmark_service import BenchmarkService
 from backend.services.executive_report_service import ExecutiveReportService
+from backend.services.business_insight_service import BusinessInsightService
+from backend.services.trend_service import TrendService
+from backend.services.executive_insights_service import ExecutiveInsightsService
 
 router = APIRouter(
     prefix="/ai",
     tags=["AI"]
 )
-
 
 # ==========================================================
 # AI Dashboard
@@ -166,20 +168,12 @@ def export_pdf():
 def analytics(days: int = 1):
     return AnalyticsService().get_summary(days)
 
-@router.get("/executive-summary")
-def executive_summary():
-    return ExecutiveSummaryService().generate()
-
 
 # ==========================================================
 # Executive Report
 # ==========================================================
-
 @router.get("/executive-report")
 def executive_report():
-    """
-    Returns an AI-generated executive report.
-    """
     try:
         service = ExecutiveReportService()
         return service.generate()
@@ -190,12 +184,44 @@ def executive_report():
             detail=f"Executive report generation failed: {str(e)}"
         )
 
-        
+
 # ==========================================================
 # Benchmark Analytics
 # ==========================================================
-
 @router.get("/benchmark")
 def benchmark():
-
     return BenchmarkService().get_benchmark()
+
+
+# ==========================================================
+# Executive Summary
+# ==========================================================
+@router.get("/executive-summary")
+def executive_summary():
+    service = ExecutiveSummaryService()
+    return service.generate()
+
+
+# ==========================================================
+# Business Insight Service
+# ==========================================================
+@router.get("/business-insights")
+def business_insights():
+    return BusinessInsightService().generate()
+
+
+# ==========================================================
+# AI Trend
+# ==========================================================
+@router.get("/trend-data")
+def trend_data():
+    return TrendService().get_trends()
+
+
+# ==========================================================
+# Executive Insights
+# ==========================================================
+@router.get("/executive-insights")
+def executive_insights():
+    service = ExecutiveInsightsService()
+    return service.generate()

@@ -1,89 +1,272 @@
-.executive-dashboard{
-    margin-top:30px;
+/* ==========================================================
+   EXECUTIVE DASHBOARD
+========================================================== */
+
+.executive-dashboard {
+    margin-top: 30px;
 }
 
-.executive-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
-    margin-top:20px;
+/* ==========================================================
+   METRIC CARDS
+========================================================== */
+
+.executive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
 }
 
-.executive-card{
-    background:#1e293b;
-    color:white;
-    border-radius:15px;
-    padding:20px;
-    text-align:center;
-    box-shadow:0 4px 15px rgba(0,0,0,.2);
+.executive-card {
+    background: #1e293b;
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, .2);
+    transition: .3s;
 }
 
-.executive-card h4{
-    color:#cbd5e1;
-    margin-bottom:15px;
+.executive-card:hover {
+    transform: translateY(-4px);
 }
 
-.executive-card h1{
-    font-size:34px;
-    color:#38bdf8;
+.executive-card h4 {
+    color: #cbd5e1;
+    margin-bottom: 15px;
 }
 
-.executive-summary{
+.executive-card h1 {
+    font-size: 34px;
+    color: #38bdf8;
+}
 
-    margin-top:30px;
+/* ==========================================================
+   EXECUTIVE SUMMARY
+========================================================== */
 
-    background:#0f172a;
+.executive-summary {
+    margin-top: 30px;
+}
 
-    color:white;
+.summary-grade {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 20px;
+}
 
-    padding:25px;
+.summary-grade span {
+    background: #22c55e;
+    padding: 8px 20px;
+    border-radius: 12px;
+    font-size: 28px;
+    font-weight: bold;
+}
 
-    border-radius:15px;
+.executive-intelligence {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 15px;
+    padding: 22px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.summary-card h3 {
+    margin-bottom: 12px;
+    color: #1565C0;
+}
+
+.summary-card p {
+    line-height: 1.7;
+    color: #555;
+}
+
+/* ==========================================================
+   CHARTS
+========================================================== */
+
+.executive-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px,1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.chart-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.08);
+}
+
+.chart-card h3 {
+    margin-bottom: 20px;
+}
+
+/* ==========================================================
+   TREND CHART
+========================================================== */
+
+.trend-section {
+    margin-top: 40px;
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,.12);
+}
+
+.trend-section h2 {
+    margin-bottom: 20px;
+    color: #1976d2;
+}
+
+.recharts-tooltip-wrapper {
+    font-size: 14px;
+}
+
+.recharts-default-tooltip {
+    border-radius: 10px !important;
+    border: none !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+
+.recharts-legend-wrapper {
+    font-size: 14px;
+}
+
+/* ==========================================================
+   AI EXECUTIVE INSIGHTS
+========================================================== */
+
+.executive-insights {
+    margin-top: 40px;
+}
+
+.executive-insights h2 {
+    margin-bottom: 20px;
+    color: #1f2937;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+    gap: 20px;
+}
+
+.insight-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    transition: .3s ease;
+    border-left: 6px solid #2196f3;
+}
+
+.insight-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.15);
+}
+
+.insight-card h3 {
+    margin-bottom: 15px;
+    color: #1565c0;
+    font-size: 20px;
+}
+
+.insight-card p {
+    margin-top: 15px;
+    color: #555;
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+/* ==========================================================
+   STATUS BADGES
+========================================================== */
+
+.status {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.status.excellent {
+    background: #2196f3;
+}
+
+.status.healthy {
+    background: #43A047;
+}
+
+.status.good {
+    background: #4caf50;
+}
+
+.status.warning {
+    background: #ff9800;
+}
+
+.status.average {
+    background: #FB8C00;
+}
+
+.status.attention {
+    background: #EF6C00;
+}
+
+.status.critical {
+    background: #f44336;
+}
+
+.status.poor {
+    background: #C62828;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .executive-intelligence {
+        grid-template-columns: 1fr;
+    }
 
 }
 
-.summary-grade{
+@media (max-width: 768px) {
 
-    display:flex;
+    .executive-grid {
+        grid-template-columns: 1fr;
+    }
 
-    justify-content:space-between;
+    .insight-grid {
+        grid-template-columns: 1fr;
+    }
 
-    align-items:center;
+    .executive-insights h2,
+    .trend-section h2 {
+        text-align: center;
+        font-size: 24px;
+    }
 
-    margin:20px 0;
+    .summary-grade {
+        flex-direction: column;
+        gap: 15px;
+    }
 
-    font-size:20px;
-
-}
-
-.summary-grade span{
-
-    background:#22c55e;
-
-    padding:8px 20px;
-
-    border-radius:12px;
-
-    font-size:28px;
-
-    font-weight:bold;
-
-}
-
-.executive-charts{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
-    gap:25px;
-    margin-top:30px;
-}
-
-.chart-card{
-    background:white;
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 5px 18px rgba(0,0,0,.08);
-}
-
-.chart-card h3{
-    margin-bottom:20px;
 }

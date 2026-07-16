@@ -3,21 +3,21 @@ from backend.services.analytics_service import AnalyticsService
 
 class ExecutiveReportService:
     """
-    Generates an AI-powered executive report
-    using analytics data.
+    Generates an AI-powered executive report using analytics data.
     """
 
+    def __init__(self):
+        self.analytics = AnalyticsService()
+
     def generate(self):
-        analytics = AnalyticsService().get_summary()
+        analytics = self.analytics.get_summary()
 
         success_rate = analytics["success_rate"]
         response = analytics["average_response_time"]
         failed = analytics["failed_requests"]
         total = analytics["total_requests"]
 
-        # ---------------------------------------------------
         # Overall Health
-        # ---------------------------------------------------
         if success_rate >= 99:
             health = "Excellent"
         elif success_rate >= 95:
@@ -27,9 +27,7 @@ class ExecutiveReportService:
         else:
             health = "Critical"
 
-        # ---------------------------------------------------
         # Executive Summary
-        # ---------------------------------------------------
         summary = [
             f"{total:,} API requests processed.",
             f"Success rate remained at {success_rate}%.",
@@ -37,9 +35,7 @@ class ExecutiveReportService:
             f"Failed requests: {failed}.",
         ]
 
-        # ---------------------------------------------------
         # Business Impact
-        # ---------------------------------------------------
         impact = []
 
         if success_rate >= 99:
@@ -55,9 +51,7 @@ class ExecutiveReportService:
 
         impact.append("Infrastructure utilization is stable.")
 
-        # ---------------------------------------------------
-        # AI Recommendations
-        # ---------------------------------------------------
+        # Recommendations
         recommendations = []
 
         if response > 200:
