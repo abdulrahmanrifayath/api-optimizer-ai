@@ -429,3 +429,129 @@ def get_connected_api_metrics(
         .limit(100)
         .all()
     )
+
+
+# =========================
+# HISTORICAL CHARTS METRICS (1h, 24h, 7d, 30d)
+# =========================
+@router.get("/metrics/historical")
+def get_historical_metrics(
+    api_id: Optional[int] = Query(None, description="Filter by API ID"),
+    time_window: str = Query("24h", description="1h, 24h, 7d, 30d"),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    from datetime import timedelta
+    now = datetime.utcnow()
+
+    if time_window == "1h":
+        cutoff = now - timedelta(hours=1)
+    elif time_window == "7d":
+        cutoff = now - timedelta(days=7)
+    elif time_window == "30d":
+        cutoff = now - timedelta(days=30)
+    else:  # 24h default
+        cutoff = now - timedelta(hours=24)
+
+    user_api_ids = [api.id for api in db.query(ConnectedAPI).filter(ConnectedAPI.user_id == current_user.id).all()]
+    if not user_api_ids:
+        return {"timeline": [], "summary": {"avg_latency": 0, "error_rate": 0, "total_requests": 0}}
+
+    query = db.query(ConnectedApiMetric).filter(
+        ConnectedApiMetric.connected_api_id.in_(user_api_ids),
+        ConnectedApiMetric.checked_at >= cutoff
+    )
+
+    if api_id:
+        query = query.filter(ConnectedApiMetric.connected_api_id == api_id)
+
+    metrics = query.order_by(ConnectedApiMetric.checked_at.asc()).all()
+
+    timeline = [
+        {
+            "id": m.id,
+            "api_id": m.connected_api_id,
+            "response_time": m.response_time,
+            "status_code": m.status_code,
+            "request_size": m.request_size or 0,
+            "response_size": m.response_size or 0,
+            "error_type": m.error_type,
+            "timestamp": m.checked_at.isoformat()
+        }
+        for m in metrics
+    ]
+
+    total_reqs = len(metrics)
+    avg_latency = round(sum(m.response_time for m in metrics) / total_reqs, 2) if total_reqs > 0 else 0.0
+    err_count = sum(1 for m in metrics if m.error_type is not None or (m.status_code and m.status_code >= 400))
+    err_rate = round((err_count / total_reqs) * 100, 2) if total_reqs > 0 else 0.0
+
+    return {
+        "timeline": timeline,
+        "summary": {
+            "avg_latency": avg_latency,
+            "error_rate": err_rate,
+            "total_requests": total_reqs,
+            "time_window": time_window
+        }
+    }
+
+
+# =========================
+# MODULE 4: ERROR DETECTION SUMMARY
+# =========================
+@router.get("/errors/summary")
+def get_error_summary(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    from backend.models.error_log import ErrorLog
+
+    user_api_ids = [api.id for api in db.query(ConnectedAPI).filter(ConnectedAPI.user_id == current_user.id).all()]
+    if not user_api_ids:
+        return []
+
+    errors = (
+        db.query(ErrorLog)
+        .filter(ErrorLog.connected_api_id.in_(user_api_ids))
+        .order_by(ErrorLog.timestamp.desc())
+        .limit(50)
+        .all()
+    )
+
+    return [
+        {
+            "id": err.id,
+            "api_id": err.connected_api_id,
+            "error_type": err.error_type,
+            "status_code": err.status_code,
+            "message": err.message,
+            "frequency": err.frequency,
+            "timestamp": err.timestamp.isoformat()
+        }
+        for err in errors
+    ]
+
+
+# =========================
+# TOGGLE MONITORING (PATCH /connected-apis/{id}/monitoring)
+# =========================
+@router.patch("/{api_id}/monitoring")
+def toggle_api_monitoring(
+    api_id: int,
+    is_monitored: bool = Query(..., description="Enable or disable monitoring"),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    api = (
+        db.query(ConnectedAPI)
+        .filter(ConnectedAPI.id == api_id, ConnectedAPI.user_id == current_user.id)
+        .first()
+    )
+
+    if not api:
+        raise HTTPException(status_code=404, detail="Connected API not found.")
+
+    api.is_monitored = is_monitored
+    db.commit()
+    return {"message": f"Monitoring {'enabled' if is_monitored else 'disabled'} for {api.name}"}

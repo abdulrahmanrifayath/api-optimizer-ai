@@ -13,7 +13,12 @@ class ConnectedAPI(Base):
     base_url = Column(String(500), nullable=False)
     description = Column(String(500), nullable=True)
 
-    # Health & Telemetry status: Healthy, Slow, Offline, Unauthorized, Timeout, SSL Error
+    # API Credentials & Connector Config
+    api_key = Column(String(500), nullable=True)
+    auth_header = Column(String(255), nullable=True)
+    is_monitored = Column(Boolean, default=True)
+
+    # Health & Telemetry status: Healthy, Warning, Critical, Offline, Slow, Timeout, SSL Error
     status = Column(String(30), default="Healthy")
     last_checked = Column(DateTime, nullable=True)
     latency = Column(Float, default=0.0)  # in milliseconds
@@ -27,3 +32,4 @@ class ConnectedAPI(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     metrics = relationship("ConnectedApiMetric", back_populates="connected_api", cascade="all, delete-orphan")
+    error_logs = relationship("ErrorLog", back_populates="connected_api", cascade="all, delete-orphan")

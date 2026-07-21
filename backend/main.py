@@ -11,6 +11,7 @@ import backend.models.user
 import backend.models.connected_api
 import backend.models.connected_api_metric
 import backend.models.recommendation_history
+import backend.models.error_log
 
 # Routes
 from backend.auth.auth_routes import router as auth_router
@@ -104,12 +105,34 @@ def startup():
             "ADD COLUMN failure_count INT DEFAULT 0",
             "ADD COLUMN total_checks INT DEFAULT 0",
             "ADD COLUMN ssl_verified BOOLEAN DEFAULT 1",
+            "ADD COLUMN api_key VARCHAR(500) NULL",
+            "ADD COLUMN auth_header VARCHAR(255) NULL",
+            "ADD COLUMN is_monitored BOOLEAN DEFAULT 1",
         ]:
             try:
                 conn.execute(text(f"ALTER TABLE connected_apis {col_def}"))
                 conn.commit()
             except Exception:
                 pass
+
+    # Ensure connected_api_metrics table has request_size & error_type
+    with engine.connect() as conn:
+        for col_def in [
+            "ADD COLUMN request_size INT DEFAULT 0",
+            "ADD COLUMN error_type VARCHAR(50) NULL",
+        ]:
+            try:
+                conn.execute(text(f"ALTER TABLE connected_api_metrics {col_def}"))
+                conn.commit()
+            except Exception:
+                pass
+
+    # Start APScheduler Background Polling Service
+    try:
+        from backend.services.scheduler_service import start_monitoring_scheduler
+        start_monitoring_scheduler()
+    except Exception as e:
+        print(f"[Startup Warning] Could not start scheduler: {e}")
 
 
 # ==========================================================

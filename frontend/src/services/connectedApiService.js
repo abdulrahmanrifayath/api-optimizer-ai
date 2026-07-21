@@ -42,6 +42,25 @@ export const getApiMetrics = async (id) => {
     return response.data;
 };
 
+export const getHistoricalMetrics = async (apiId = null, timeWindow = "24h") => {
+    const params = new URLSearchParams();
+    if (apiId) params.append("api_id", apiId);
+    params.append("time_window", timeWindow);
+
+    const response = await API.get(`/connected-apis/metrics/historical?${params.toString()}`);
+    return response.data;
+};
+
+export const getErrorSummary = async () => {
+    const response = await API.get("/connected-apis/errors/summary");
+    return response.data;
+};
+
+export const toggleApiMonitoring = async (id, isMonitored) => {
+    const response = await API.patch(`/connected-apis/${id}/monitoring?is_monitored=${isMonitored}`);
+    return response.data;
+};
+
 export const getConnectedApiSummary = async () => {
     const response = await API.get("/connected-apis/summary");
     return response.data;
