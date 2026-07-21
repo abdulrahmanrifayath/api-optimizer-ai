@@ -4,6 +4,7 @@ import {
   FaServer,
   FaList,
   FaRobot,
+  FaBriefcase,
   FaBell,
   FaCog
 } from "react-icons/fa";
@@ -34,6 +35,12 @@ function Sidebar() {
           <Link to="/dashboard" style={itemStyle("/dashboard")}>
             <FaChartBar />
             <span>Dashboard</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/executive-dashboard" style={itemStyle("/executive-dashboard")}>
+            <FaBriefcase />
+            <span>Executive Board</span>
           </Link>
         </li>
         <li>

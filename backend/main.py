@@ -20,6 +20,7 @@ from backend.routes.user_routes import router as user_router
 from backend.routes.ws_routes import router as ws_router
 from backend.routes.connected_api_routes import router as connected_api_router
 from backend.routes.api_log_routes import router as api_log_router
+from backend.routes.report_routes import router as report_router
 
 # Middleware
 from backend.middleware.api_logger import ApiLoggerMiddleware
@@ -33,9 +34,9 @@ from backend.ai_engine.insights import generate_insights
 # FastAPI Application
 # ==========================================================
 app = FastAPI(
-    title="API Optimizer AI",
-    description="AI-Powered API Monitoring and Optimization Platform",
-    version="1.0.0",
+    title="API Optimizer AI Engine",
+    description="Enterprise API performance optimization, log collection, AI analytics & executive business intelligence platform.",
+    version="2.0.0"
 )
 
 
@@ -67,6 +68,7 @@ app.include_router(user_router)
 app.include_router(connected_api_router)
 app.include_router(api_log_router)
 app.include_router(ai_router)
+app.include_router(report_router)
 app.include_router(ws_router)
 
 from sqlalchemy import text
