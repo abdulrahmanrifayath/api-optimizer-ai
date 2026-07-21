@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from backend.database.database import Base
@@ -20,3 +21,5 @@ class ConnectedAPI(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user_id = Column(Integer, ForeignKey("users.id"))
+
+    metrics = relationship("ConnectedApiMetric", back_populates="connected_api", cascade="all, delete-orphan")

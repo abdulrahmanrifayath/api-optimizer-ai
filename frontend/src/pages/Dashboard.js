@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import { getConnectedApiSummary } from "../services/connectedApiService";
 
 import "../styles/InfrastructureStatus.css";
 
@@ -35,6 +36,9 @@ import {
   FaServer,
   FaClock,
   FaExclamationTriangle,
+  FaLink,
+  FaCheckCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 
 import "../styles/dashboard.css";
@@ -50,6 +54,7 @@ function Dashboard({
   // State
   // =========================
   const [dashboard, setDashboard] = useState(null);
+  const [apiSummary, setApiSummary] = useState(null);
   const [lastUpdated, setLastUpdated] = useState("");
 
   // =========================
@@ -57,9 +62,15 @@ function Dashboard({
   // =========================
   async function fetchDashboard() {
     try {
-      const res = await API.get("/ai/dashboard");
+      const [res, summaryRes] = await Promise.all([
+        API.get("/ai/dashboard"),
+        getConnectedApiSummary().catch(() => null),
+      ]);
 
       setDashboard(res.data);
+      if (summaryRes) {
+        setApiSummary(summaryRes);
+      }
 
       setLastUpdated(
         new Date().toLocaleTimeString()
@@ -177,6 +188,45 @@ function Dashboard({
               errorRate={dashboard.score.metrics.error_rate}
             />
           </div>
+
+          {/* =========================
+              Connected APIs Live Overview
+          ========================== */}
+          {apiSummary && (
+            <div style={{ marginTop: "25px", marginBottom: "25px" }}>
+              <h3 style={{ fontSize: "16px", marginBottom: "12px", color: "#374151" }}>
+                Connected APIs Overview
+              </h3>
+              <div className="cards">
+                <MetricCard
+                  title="Total Connected APIs"
+                  value={apiSummary.total_connected_apis}
+                  color="#6366f1"
+                  icon={<FaLink />}
+                />
+                <MetricCard
+                  title="Active APIs"
+                  value={apiSummary.active_apis}
+                  color="#16a34a"
+                  icon={<FaCheckCircle />}
+                />
+                <MetricCard
+                  title="Inactive APIs"
+                  value={apiSummary.inactive_apis}
+                  color="#dc2626"
+                  icon={<FaTimesCircle />}
+                />
+                <MetricCard
+                  title="Avg API Response"
+                  value={apiSummary.average_response_time}
+                  suffix=" ms"
+                  decimals={1}
+                  color="#0284c7"
+                  icon={<FaClock />}
+                />
+              </div>
+            </div>
+          )}
 
           {/* =========================
               Charts

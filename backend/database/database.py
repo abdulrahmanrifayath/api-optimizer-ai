@@ -13,7 +13,7 @@ load_dotenv(dotenv_path=dotenv_path)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-print("🔥 DATABASE URL USED:", DATABASE_URL)
+print("[DATABASE] URL USED:", DATABASE_URL)
 
 if not DATABASE_URL:
     raise Exception("DATABASE_URL not found in .env file")

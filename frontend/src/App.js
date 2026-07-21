@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ConnectedApis from "./pages/ConnectedApis";
+import LogExplorer from "./pages/LogExplorer";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import HomeRedirect from "./auth/HomeRedirect";
@@ -55,6 +56,19 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <ConnectedApis
+                                    darkMode={darkMode}
+                                    setDarkMode={setDarkMode}
+                                />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Log Explorer */}
+                    <Route
+                        path="/logs"
+                        element={
+                            <ProtectedRoute>
+                                <LogExplorer
                                     darkMode={darkMode}
                                     setDarkMode={setDarkMode}
                                 />
