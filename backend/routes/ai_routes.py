@@ -160,10 +160,62 @@ def update_recommendation_status(
         if not updated_rec:
             raise HTTPException(status_code=404, detail="Recommendation record not found.")
         return updated_rec
-    except HTTPException:
-        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to update recommendation status: {str(e)}"
+        )
+
+
+# ==========================================================
+# SPRINT 5: FEATURE ENGINEERING (Module 1)
+# ==========================================================
+@router.get("/features")
+def get_feature_engineering_metrics(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    try:
+        service = AIAnalyticsService(db, current_user)
+        return service.get_feature_engineering_metrics()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate feature metrics: {str(e)}"
+        )
+
+
+# ==========================================================
+# SPRINT 5: TREND DETECTION (Module 7)
+# ==========================================================
+@router.get("/trends")
+def get_trend_detection(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    try:
+        service = AIAnalyticsService(db, current_user)
+        return service.get_trend_detection()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to compute trend detection: {str(e)}"
+        )
+
+
+# ==========================================================
+# SPRINT 5: SMART ALERTS & EXPLAINER (Module 8)
+# ==========================================================
+@router.get("/smart-alerts")
+def get_smart_alerts(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    try:
+        service = AIAnalyticsService(db, current_user)
+        return service.get_smart_alerts()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate smart alerts: {str(e)}"
         )

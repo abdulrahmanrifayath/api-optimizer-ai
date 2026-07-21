@@ -39,3 +39,18 @@ export const updateRecommendationStatus = async (recId, status) => {
     const response = await API.patch(`/ai/recommendations/${recId}/status`, { status });
     return response.data;
 };
+
+export const getAiFeatures = async () => {
+    const response = await API.get("/ai/features");
+    return response.data;
+};
+
+export const getAiTrends = async () => {
+    const response = await API.get("/ai/trends");
+    return response.data;
+};
+
+export const getAiSmartAlerts = async () => {
+    const response = await API.get("/ai/smart-alerts");
+    return response.data;
+};
