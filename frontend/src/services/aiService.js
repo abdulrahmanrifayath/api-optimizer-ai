@@ -20,7 +20,22 @@ export const getAiRiskAnalysis = async () => {
     return response.data;
 };
 
-export const getAiRecommendations = async () => {
-    const response = await API.get("/ai/recommendations");
+export const getAiScoreCard = async () => {
+    const response = await API.get("/ai/score-card");
+    return response.data;
+};
+
+export const getAiBusinessInsights = async () => {
+    const response = await API.get("/ai/business-insights");
+    return response.data;
+};
+
+export const getAiRecommendationHistory = async () => {
+    const response = await API.get("/ai/recommendations/history");
+    return response.data;
+};
+
+export const updateRecommendationStatus = async (recId, status) => {
+    const response = await API.patch(`/ai/recommendations/${recId}/status`, { status });
     return response.data;
 };

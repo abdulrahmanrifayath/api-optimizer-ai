@@ -10,6 +10,7 @@ import backend.models.api_log
 import backend.models.user
 import backend.models.connected_api
 import backend.models.connected_api_metric
+import backend.models.recommendation_history
 
 # Routes
 from backend.auth.auth_routes import router as auth_router

@@ -1,99 +1,135 @@
+import { useEffect, useState } from "react";
+import { getAiRecommendationHistory, updateRecommendationStatus } from "../services/aiService";
 import "./../styles/AIRecommendations.css";
 import {
   FaLightbulb,
   FaCheckCircle,
-  FaExclamationTriangle,
-  FaRocket,
-  FaDatabase,
+  FaTimesCircle,
+  FaCheckDouble,
 } from "react-icons/fa";
 
-function AIRecommendations({ dashboard }) {
-  if (!dashboard) return null;
+function AIRecommendations() {
+  const [recommendations, setRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const metrics = dashboard.score.metrics;
+  const loadRecommendations = async () => {
+    try {
+      const data = await getAiRecommendationHistory();
+      setRecommendations(data || []);
+    } catch (err) {
+      console.error("Failed to load recommendation history:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const recommendations = [];
+  useEffect(() => {
+    loadRecommendations();
+  }, []);
 
-  // AI Score Recommendation
-  if (dashboard.score.score >= 90) {
-    recommendations.push({
-      icon: <FaCheckCircle />,
-      title: "Excellent API Health",
-      description:
-        "Your API is performing very well. Keep monitoring traffic patterns.",
-      type: "success",
-    });
-  }
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      await updateRecommendationStatus(id, newStatus);
+      setRecommendations((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, status: newStatus } : item))
+      );
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    }
+  };
 
-  // Error Rate
-  if (metrics.error_rate > 5) {
-    recommendations.push({
-      icon: <FaExclamationTriangle />,
-      title: "High Error Rate",
-      description:
-        "Investigate failing endpoints and improve exception handling.",
-      type: "warning",
-    });
-  }
+  const getStatusBadgeStyle = (status) => {
+    switch (status) {
+      case "Accepted":
+        return { backgroundColor: "#dbeafe", color: "#1e40af" };
+      case "Applied":
+        return { backgroundColor: "#dcfce7", color: "#15803d" };
+      case "Ignored":
+        return { backgroundColor: "#fee2e2", color: "#991b1b" };
+      default:
+        return { backgroundColor: "#fef3c7", color: "#92400e" };
+    }
+  };
 
-  // Response Time
-  if (metrics.avg_response_time > 0.3) {
-    recommendations.push({
-      icon: <FaRocket />,
-      title: "Optimize Response Time",
-      description:
-        "Consider caching, indexing your database, or load balancing.",
-      type: "warning",
-    });
-  } else {
-    recommendations.push({
-      icon: <FaRocket />,
-      title: "Response Time Healthy",
-      description:
-        "Current response time is excellent. No optimization needed.",
-      type: "success",
-    });
-  }
-
-  // Database
-  recommendations.push({
-    icon: <FaDatabase />,
-    title: "Database Optimization",
-    description:
-      "Monitor slow queries and create indexes for frequently accessed tables.",
-    type: "info",
-  });
-
-  // General AI Suggestion
-  recommendations.push({
-    icon: <FaLightbulb />,
-    title: "AI Suggestion",
-    description:
-      "Enable request caching and rate limiting for heavily used endpoints.",
-    type: "ai",
-  });
+  if (loading) return null;
 
   return (
-    <div className="recommendation-panel">
-      <h2>🤖 AI Optimization Recommendations</h2>
+    <div className="recommendation-panel" style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
+      <h2><FaLightbulb style={{ color: "#eab308", marginRight: "8px" }} /> AI Optimization Recommendations & Recommendation Engine</h2>
 
-      {recommendations.map((item, index) => (
-        <div
-          key={index}
-          className={`recommendation-card ${item.type}`}
-        >
-          <div className="recommendation-icon">
-            {item.icon}
-          </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "15px" }}>
+        {recommendations.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              padding: "16px",
+              borderRadius: "8px",
+              border: "1px solid #e5e7eb",
+              backgroundColor: "#f8fafc",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "12px",
+            }}
+          >
+            <div style={{ flex: "1 1 300px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "2px 8px", borderRadius: "4px", backgroundColor: "#e0e7ff", color: "#3730a3" }}>
+                  {item.category}
+                </span>
+                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "2px 8px", borderRadius: "4px", ...getStatusBadgeStyle(item.status) }}>
+                  {item.status}
+                </span>
+              </div>
+              <h4 style={{ margin: "8px 0 4px 0", fontSize: "16px", color: "#1e293b" }}>{item.title}</h4>
+              <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>{item.impact}</p>
+            </div>
 
-          <div className="recommendation-content">
-            <h4>{item.title}</h4>
-            <p>{item.description}</p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {item.status !== "Accepted" && item.status !== "Applied" && (
+                <button
+                  onClick={() => handleStatusChange(item.id, "Accepted")}
+                  style={btnActionStyle("#2563eb", "#ffffff")}
+                >
+                  <FaCheckCircle style={{ marginRight: "4px" }} /> Accept
+                </button>
+              )}
+              {item.status !== "Applied" && (
+                <button
+                  onClick={() => handleStatusChange(item.id, "Applied")}
+                  style={btnActionStyle("#16a34a", "#ffffff")}
+                >
+                  <FaCheckDouble style={{ marginRight: "4px" }} /> Apply
+                </button>
+              )}
+              {item.status !== "Ignored" && (
+                <button
+                  onClick={() => handleStatusChange(item.id, "Ignored")}
+                  style={btnActionStyle("#9ca3af", "#ffffff")}
+                >
+                  <FaTimesCircle style={{ marginRight: "4px" }} /> Ignore
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
+
+const btnActionStyle = (bg, color) => ({
+  padding: "6px 12px",
+  backgroundColor: bg,
+  color: color,
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "12px",
+  fontWeight: "bold",
+  display: "inline-flex",
+  alignItems: "center",
+});
 
 export default AIRecommendations;
