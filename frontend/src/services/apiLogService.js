@@ -20,6 +20,29 @@ export const getLogStats = async () => {
     return response.data;
 };
 
+export const getLogCharts = async (hours = 24) => {
+    const response = await API.get(`/api/v1/logs/charts?hours=${hours}`);
+    return response.data;
+};
+
+export const getEndpointAnalytics = async () => {
+    const response = await API.get("/api/v1/logs/endpoints/analytics");
+    return response.data;
+};
+
+export const exportLogs = async (format = "csv") => {
+    const response = await API.get(`/api/v1/logs/export?format=${format}`, {
+        responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `api_telemetry_logs.${format}`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+};
+
 export const ingestLog = async (logData) => {
     const response = await API.post("/api/v1/logs/ingest", logData);
     return response.data;
