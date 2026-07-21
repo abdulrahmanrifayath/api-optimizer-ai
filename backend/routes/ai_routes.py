@@ -1,227 +1,102 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
-from backend.ai_engine.analyzer import fetch_logs
-from backend.ai_engine.anomaly import detect_anomalies
-from backend.ai_engine.scoring import calculate_api_scores
-from backend.ai_engine.traffic import get_traffic_insights
+from backend.database.database import get_db
+from backend.auth.dependencies import get_current_user
+from backend.services.ai_analytics_service import AIAnalyticsService
 
-from backend.services.action_service import ActionService
-from backend.services.analytics_service import AnalyticsService
-from backend.services.anomaly_service import AnomalyService
-from backend.services.export_service import ExportService
-from backend.services.history_service import HistoryService
-from backend.services.optimization_service import OptimizationService
-from backend.services.pdf_export_service import PDFExportService
-from backend.services.prediction_service import PredictionService
-from backend.services.simulation_service import SimulationService
-from backend.services.executive_summary_service import ExecutiveSummaryService
-from backend.services.benchmark_service import BenchmarkService
-from backend.services.executive_report_service import ExecutiveReportService
-from backend.services.business_insight_service import BusinessInsightService
-from backend.services.trend_service import TrendService
-from backend.services.executive_insights_service import ExecutiveInsightsService
 
 router = APIRouter(
     prefix="/ai",
-    tags=["AI"]
+    tags=["AI Engine & Analytics"]
 )
 
+
 # ==========================================================
-# AI Dashboard
+# 1. AI DASHBOARD OVERVIEW
 # ==========================================================
 @router.get("/dashboard")
-def ai_dashboard():
+def ai_dashboard(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     try:
-        logs = fetch_logs()
-
-        return {
-            "score": calculate_api_scores(logs),
-            "alerts": detect_anomalies(logs),
-            "traffic": get_traffic_insights(logs),
-        }
-
+        service = AIAnalyticsService(db, current_user)
+        return service.get_dashboard_ai_summary()
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Dashboard generation failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate AI dashboard: {str(e)}"
         )
 
 
 # ==========================================================
-# Traffic Prediction
+# 2. AI TELEMETRY ANOMALIES
 # ==========================================================
-@router.get("/predict-traffic")
-def predict_traffic():
+@router.get("/anomalies")
+def get_anomalies(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     try:
-        return PredictionService().get_prediction()
-
+        service = AIAnalyticsService(db, current_user)
+        return service.get_anomalies()
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Traffic prediction failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch anomalies: {str(e)}"
         )
 
 
 # ==========================================================
-# Anomaly Detection
+# 3. TRAFFIC & LATENCY PREDICTIONS
 # ==========================================================
-@router.get("/detect-anomaly")
-def detect_anomaly():
+@router.get("/predictions")
+def get_predictions(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     try:
-        return AnomalyService().detect()
-
+        service = AIAnalyticsService(db, current_user)
+        return service.get_predictions()
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Anomaly detection failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate predictions: {str(e)}"
         )
 
 
 # ==========================================================
-# Optimization Advisor
+# 4. ENDPOINT RISK ANALYSIS
 # ==========================================================
-@router.get("/optimization-advisor")
-def optimization_advisor():
+@router.get("/risk-analysis")
+def get_risk_analysis(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     try:
-        return OptimizationService().get_recommendations()
-
+        service = AIAnalyticsService(db, current_user)
+        return service.get_risk_analysis()
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Optimization advisor failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to evaluate risk analysis: {str(e)}"
         )
 
 
 # ==========================================================
-# Historical Metrics
+# 5. AI OPTIMIZATION RECOMMENDATIONS
 # ==========================================================
-@router.get("/history")
-def api_history():
-    return HistoryService().get_history()
-
-
-# ==========================================================
-# AI Action Center
-# ==========================================================
-@router.get("/actions")
-def get_ai_actions():
-    return ActionService().get_actions()
-
-
-# ==========================================================
-# AI Simulation
-# ==========================================================
-@router.post("/simulate-action/{action_id}")
-def simulate_action(action_id: int):
-    return SimulationService().simulate(action_id)
-
-
-# ==========================================================
-# Export JSON
-# ==========================================================
-@router.get("/export/json")
-def export_json():
-    return Response(
-        content=ExportService.export_json(),
-        media_type="application/json",
-        headers={
-            "Content-Disposition": "attachment; filename=api_report.json"
-        },
-    )
-
-
-# ==========================================================
-# Export CSV
-# ==========================================================
-@router.get("/export/csv")
-def export_csv():
-    return Response(
-        content=ExportService.export_csv(),
-        media_type="text/csv",
-        headers={
-            "Content-Disposition": "attachment; filename=api_report.csv"
-        },
-    )
-
-
-# ==========================================================
-# Export PDF
-# ==========================================================
-@router.get("/export/pdf")
-def export_pdf():
-    pdf = PDFExportService.generate()
-
-    return Response(
-        content=pdf,
-        media_type="application/pdf",
-        headers={
-            "Content-Disposition": "attachment; filename=API_Optimizer_Report.pdf"
-        },
-    )
-
-
-# ==========================================================
-# Analytics
-# ==========================================================
-@router.get("/analytics")
-def analytics(days: int = 1):
-    return AnalyticsService().get_summary(days)
-
-
-# ==========================================================
-# Executive Report
-# ==========================================================
-@router.get("/executive-report")
-def executive_report():
+@router.get("/recommendations")
+def get_recommendations(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
     try:
-        service = ExecutiveReportService()
-        return service.generate()
-
+        service = AIAnalyticsService(db, current_user)
+        return service.get_recommendations()
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Executive report generation failed: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate recommendations: {str(e)}"
         )
-
-
-# ==========================================================
-# Benchmark Analytics
-# ==========================================================
-@router.get("/benchmark")
-def benchmark():
-    return BenchmarkService().get_benchmark()
-
-
-# ==========================================================
-# Executive Summary
-# ==========================================================
-@router.get("/executive-summary")
-def executive_summary():
-    service = ExecutiveSummaryService()
-    return service.generate()
-
-
-# ==========================================================
-# Business Insight Service
-# ==========================================================
-@router.get("/business-insights")
-def business_insights():
-    return BusinessInsightService().generate()
-
-
-# ==========================================================
-# AI Trend
-# ==========================================================
-@router.get("/trend-data")
-def trend_data():
-    return TrendService().get_trends()
-
-
-# ==========================================================
-# Executive Insights
-# ==========================================================
-@router.get("/executive-insights")
-def executive_insights():
-    service = ExecutiveInsightsService()
-    return service.generate()
