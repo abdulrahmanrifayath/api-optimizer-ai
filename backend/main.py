@@ -93,6 +93,23 @@ def startup():
             except Exception:
                 pass  # Column already exists
 
+    # Ensure connected_apis table has extended telemetry columns
+    with engine.connect() as conn:
+        for col_def in [
+            "ADD COLUMN last_checked DATETIME NULL",
+            "ADD COLUMN latency DOUBLE PRECISION DEFAULT 0.0",
+            "ADD COLUMN availability DOUBLE PRECISION DEFAULT 100.0",
+            "ADD COLUMN avg_response_time DOUBLE PRECISION DEFAULT 0.0",
+            "ADD COLUMN failure_count INT DEFAULT 0",
+            "ADD COLUMN total_checks INT DEFAULT 0",
+            "ADD COLUMN ssl_verified BOOLEAN DEFAULT 1",
+        ]:
+            try:
+                conn.execute(text(f"ALTER TABLE connected_apis {col_def}"))
+                conn.commit()
+            except Exception:
+                pass
+
 
 # ==========================================================
 # Root Endpoint

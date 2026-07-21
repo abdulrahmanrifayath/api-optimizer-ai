@@ -1,7 +1,14 @@
 import API from "./api";
 
-export const getConnectedApis = async () => {
-    const response = await API.get("/connected-apis/");
+export const getConnectedApis = async (filters = {}) => {
+    const params = new URLSearchParams();
+    if (filters.query) params.append("query", filters.query);
+    if (filters.status && filters.status !== "All") params.append("status", filters.status);
+    if (filters.sort_by) params.append("sort_by", filters.sort_by);
+    if (filters.page) params.append("page", filters.page);
+    if (filters.limit) params.append("limit", filters.limit);
+
+    const response = await API.get(`/connected-apis/?${params.toString()}`);
     return response.data;
 };
 

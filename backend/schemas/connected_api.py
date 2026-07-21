@@ -25,6 +25,13 @@ class ConnectedAPIResponse(BaseModel):
     base_url: str
     description: Optional[str]
     status: str
+    last_checked: Optional[datetime] = None
+    latency: float = 0.0
+    availability: float = 100.0
+    avg_response_time: float = 0.0
+    failure_count: int = 0
+    total_checks: int = 0
+    ssl_verified: bool = True
     created_at: datetime
     user_id: int
 
@@ -32,10 +39,19 @@ class ConnectedAPIResponse(BaseModel):
         from_attributes = True
 
 
+class ConnectedAPIPaginatedResponse(BaseModel):
+    items: List[ConnectedAPIResponse]
+    total: int
+    page: int
+    limit: int
+    total_pages: int
+
+
 class TestConnectionResponse(BaseModel):
     status: str
     status_code: Optional[int] = None
     response_time: Optional[float] = None
+    ssl_verified: bool = True
     checked_at: str
     error: Optional[str] = None
 
@@ -55,6 +71,9 @@ class ConnectedApiMetricResponse(BaseModel):
 class ConnectedApiSummaryResponse(BaseModel):
     total_connected_apis: int
     active_apis: int
+    healthy_apis: int
+    slow_apis: int
+    offline_apis: int
     inactive_apis: int
     average_response_time: float
     last_connection_check: Optional[datetime] = None
