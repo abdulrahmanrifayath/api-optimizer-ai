@@ -1,5 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
+/* ============================================================
+   CANVA-STYLE UNIVERSAL THEME SYSTEM (DAY & NIGHT MODES)
+============================================================ */
+
+:root {
+    /* Day / Light Mode Palette */
+    --bg-app: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.06) 0px, transparent 50%),
+               radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.06) 0px, transparent 50%),
+               #f8fafc;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --bg-card-hover: rgba(255, 255, 255, 1);
+    --bg-sidebar: #ffffff;
+    --bg-navbar: rgba(255, 255, 255, 0.95);
+    --bg-search: #f1f5f9;
+    --bg-hero: linear-gradient(135deg, #311b92 0%, #4a148c 45%, #880e4f 100%);
+    
+    --border-card: rgba(226, 232, 240, 0.9);
+    --border-card-hover: #a855f7;
+    --border-sidebar: #e2e8f0;
+
+    --text-main: #0f172a;
+    --text-heading: #1e1b4b;
+    --text-muted: #64748b;
+    --text-link: #374151;
+    --text-active: #4f46e5;
+    --bg-active: #eef2ff;
+
+    --shadow-card: 0 10px 30px -5px rgba(99, 102, 241, 0.08);
+    --shadow-hover: 0 20px 35px -8px rgba(124, 58, 237, 0.2);
+    
+    --table-header-bg: #f8fafc;
+    --table-row-bg: #ffffff;
+    --table-row-hover: #f1f5f9;
+    --table-border: #f1f5f9;
+}
+
+.dashboard.dark {
+    /* Night / Dark Mode Palette */
+    --bg-app: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.12) 0px, transparent 50%),
+               #09090b;
+    --bg-card: rgba(18, 18, 26, 0.95);
+    --bg-card-hover: rgba(26, 26, 36, 1);
+    --bg-sidebar: #121217;
+    --bg-navbar: rgba(18, 18, 26, 0.95);
+    --bg-search: #1e1e28;
+    --bg-hero: linear-gradient(135deg, #18093c 0%, #2e0e56 50%, #4a0033 100%);
+    
+    --border-card: rgba(255, 255, 255, 0.09);
+    --border-card-hover: #c084fc;
+    --border-sidebar: rgba(255, 255, 255, 0.08);
+
+    --text-main: #f8fafc;
+    --text-heading: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --text-link: #d4d4d8;
+    --text-active: #c084fc;
+    --bg-active: rgba(192, 132, 252, 0.15);
+
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 20px 40px rgba(192, 132, 252, 0.25);
+
+    --table-header-bg: #18181b;
+    --table-row-bg: #141419;
+    --table-row-hover: #27272a;
+    --table-border: #27272a;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,25 +77,21 @@
 }
 
 body {
-    background: #f8fafc;
-    color: #0f172a;
+    background: var(--bg-app);
+    color: var(--text-main);
     -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', 'Inter', sans-serif;
     letter-spacing: -0.025em;
+    color: var(--text-heading);
 }
 
-/* ===========================
-   Canva Mesh Background
-=========================== */
 .dashboard {
     min-height: 100vh;
-    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.06) 0px, transparent 50%),
-                radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.06) 0px, transparent 50%),
-                #f8fafc;
+    background: var(--bg-app);
+    color: var(--text-main);
     transition: background 0.4s ease, color 0.4s ease;
 }
 
@@ -40,98 +105,112 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 1600px;
 }
 
-/* Gradient Text Effect */
-.gradient-text {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+/* Navbar Adaptive Theme */
+.navbar {
+    height: 70px;
+    background: var(--bg-navbar);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--border-sidebar);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-/* ===========================
-   Canva Hero Banner
-=========================== */
+.navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-search);
+    padding: 10px 16px;
+    border-radius: 12px;
+    width: 340px;
+    border: 1px solid var(--border-sidebar);
+    transition: background 0.3s ease;
+}
+
+.navbar-search input {
+    border: none;
+    background: none;
+    width: 100%;
+    outline: none;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+.icon-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-main);
+    transition: color 0.2s;
+}
+
+.icon-btn:hover {
+    color: var(--text-active);
+}
+
+/* Sidebar Adaptive Theme */
+.sidebar {
+    width: 230px;
+    padding: 24px 18px;
+    border-right: 1px solid var(--border-sidebar);
+    background: var(--bg-sidebar);
+    min-height: calc(100vh - 70px);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    color: var(--text-link);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+    background: var(--bg-active);
+    color: var(--text-active);
+}
+
+.sidebar-link.active {
+    background: var(--bg-active);
+    color: var(--text-active);
+    font-weight: 700;
+}
+
+/* Hero Banner */
 .hero-banner {
-    background: linear-gradient(135deg, #311b92 0%, #4a148c 40%, #880e4f 100%);
+    background: var(--bg-hero);
     border-radius: 24px;
     padding: 32px 40px;
     color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 20px 40px -10px rgba(74, 20, 140, 0.35);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
     margin-bottom: 32px;
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.hero-banner::before {
-    content: '';
-    position: absolute;
-    top: -60%;
-    right: -10%;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(217, 70, 239, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
-    border-radius: 50%;
-    pointer-events: none;
-}
-
 .hero-banner h1 {
-    font-size: 30px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    letter-spacing: -0.03em;
+    color: #ffffff;
 }
 
-.hero-banner p {
-    color: #e9d5ff;
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-.live-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    border-radius: 40px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #f472b6;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.04em;
-}
-
-.pulse-dot {
-    width: 9px;
-    height: 9px;
-    background-color: #34d399;
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
-    animation: pulseDot 1.8s infinite;
-}
-
-@keyframes pulseDot {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
-    }
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 8px rgba(52, 211, 153, 0);
-    }
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
-    }
-}
-
-/* ===========================
-   Canva Quick Action Bar
-=========================== */
+/* Canva Action Grid */
 .canva-action-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -140,23 +219,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .canva-action-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: var(--bg-card);
     backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 18px 22px;
     display: flex;
     align-items: center;
     gap: 16px;
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.08);
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
 }
 
 .canva-action-card:hover {
     transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 20px 35px -8px rgba(124, 58, 237, 0.2);
-    border-color: #a855f7;
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-card-hover);
 }
 
 .canva-action-icon {
@@ -171,9 +250,7 @@ h1, h2, h3, h4, h5, h6 {
     flex-shrink: 0;
 }
 
-/* ===========================
-   Metric Cards Grid
-=========================== */
+/* Metric Cards */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -182,43 +259,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .metric-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--bg-card);
     backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 24px;
     display: flex;
     align-items: center;
     gap: 18px;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-card);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
-    position: relative;
 }
 
 .metric-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 35px -8px rgba(79, 70, 229, 0.18);
-    border-color: #818cf8;
-}
-
-.metric-icon {
-    width: 58px;
-    height: 58px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    color: white;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    flex-shrink: 0;
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-card-hover);
 }
 
 .metric-card h4 {
     margin: 0;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
@@ -229,12 +291,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 4px;
     font-size: 30px;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-main);
 }
 
-/* ===========================
-   Charts & Floating Containers
-=========================== */
+/* Charts & Containers */
 .charts-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -252,20 +312,23 @@ h1, h2, h3, h4, h5, h6 {
 .activity-panel,
 .leaderboard-card,
 .prediction-card,
-.risk-card {
-    background: rgba(255, 255, 255, 0.95);
+.risk-card,
+.timeline-card,
+.ai-panel,
+.notification-panel {
+    background: var(--bg-card);
     backdrop-filter: blur(12px);
     padding: 28px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-card);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
 }
 
 .chart-card:hover,
 .activity-panel:hover,
 .leaderboard-card:hover {
-    box-shadow: 0 15px 35px -5px rgba(99, 102, 241, 0.12);
+    box-shadow: var(--shadow-hover);
 }
 
 .chart-card h3,
@@ -273,16 +336,14 @@ h1, h2, h3, h4, h5, h6 {
 .leaderboard-card h2 {
     font-size: 18px;
     font-weight: 800;
-    color: #1e1b4b;
+    color: var(--text-heading);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/* ===========================
-   Activity & Leaderboard Tables
-=========================== */
+/* Table Themes */
 .activity-table, .leaderboard-table {
     width: 100%;
     border-collapse: separate;
@@ -293,7 +354,7 @@ h1, h2, h3, h4, h5, h6 {
 .activity-table th, .leaderboard-table th {
     text-align: left;
     background: transparent;
-    color: #64748b;
+    color: var(--text-muted);
     padding: 10px 16px;
     font-size: 12px;
     font-weight: 700;
@@ -303,27 +364,27 @@ h1, h2, h3, h4, h5, h6 {
 
 .activity-table td, .leaderboard-table td {
     padding: 14px 16px;
-    background: #f8fafc;
+    background: var(--table-row-bg);
     font-size: 14px;
-    color: #334155;
-    border-top: 1px solid #f1f5f9;
-    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-main);
+    border-top: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
 }
 
 .activity-table td:first-child, .leaderboard-table td:first-child {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
-    border-left: 1px solid #f1f5f9;
+    border-left: 1px solid var(--table-border);
 }
 
 .activity-table td:last-child, .leaderboard-table td:last-child {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
-    border-right: 1px solid #f1f5f9;
+    border-right: 1px solid var(--table-border);
 }
 
 .activity-table tr:hover td, .leaderboard-table tr:hover td {
-    background: #f1f5f9;
+    background: var(--table-row-hover);
 }
 
 .status {
@@ -337,65 +398,4 @@ h1, h2, h3, h4, h5, h6 {
 .success {
     background: #dcfce7;
     color: #15803d;
-}
-
-/* ===========================
-   Canva Dark Mode Overrides
-=========================== */
-.dashboard.dark {
-    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.12) 0px, transparent 50%),
-                #09090b;
-    color: #f8fafc;
-}
-
-.dashboard.dark .hero-banner {
-    background: linear-gradient(135deg, #18093c 0%, #2e0e56 50%, #4a0033 100%);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.dashboard.dark .canva-action-card,
-.dashboard.dark .chart-card,
-.dashboard.dark .metric-card,
-.dashboard.dark .activity-panel,
-.dashboard.dark .leaderboard-card,
-.dashboard.dark .prediction-card,
-.dashboard.dark .risk-card {
-    background: rgba(18, 18, 24, 0.9);
-    color: #f8fafc;
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-.dashboard.dark .metric-card:hover,
-.dashboard.dark .canva-action-card:hover {
-    border-color: #c084fc;
-    box-shadow: 0 20px 35px rgba(192, 132, 252, 0.25);
-}
-
-.dashboard.dark .metric-card h4 {
-    color: #a1a1aa;
-}
-
-.dashboard.dark .metric-card h2 {
-    color: #f4f4f5;
-}
-
-.dashboard.dark .chart-card h3,
-.dashboard.dark .activity-panel h2,
-.dashboard.dark .leaderboard-card h2 {
-    color: #f4f4f5;
-}
-
-.dashboard.dark .activity-table td,
-.dashboard.dark .leaderboard-table td {
-    background: #18181b;
-    color: #e4e4e7;
-    border-color: #27272a;
-}
-
-.dashboard.dark .activity-table tr:hover td,
-.dashboard.dark .leaderboard-table tr:hover td {
-    background: #27272a;
 }

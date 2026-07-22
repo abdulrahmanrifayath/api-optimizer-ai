@@ -14,61 +14,50 @@ function Sidebar() {
 
   const isLinkActive = (path) => location.pathname === path;
 
-  const itemStyle = (path) => ({
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    padding: "10px 14px",
-    borderRadius: "6px",
-    color: isLinkActive(path) ? "#2563eb" : "#374151",
-    backgroundColor: isLinkActive(path) ? "#eff6ff" : "transparent",
-    fontWeight: isLinkActive(path) ? "bold" : "normal",
-    textDecoration: "none",
-    fontSize: "14px",
-  });
-
   return (
-    <aside className="sidebar" style={{ width: "220px", padding: "20px", borderRight: "1px solid #e5e7eb", backgroundColor: "#ffffff" }}>
-      <h2 style={{ fontSize: "14px", color: "#9ca3af", textTransform: "uppercase", marginBottom: "15px" }}>Navigation</h2>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
+    <aside className="sidebar">
+      <h2 style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "16px", paddingLeft: "12px" }}>
+        Navigation
+      </h2>
+      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "4px" }}>
         <li>
-          <Link to="/dashboard" style={itemStyle("/dashboard")}>
+          <Link to="/dashboard" className={`sidebar-link ${isLinkActive("/dashboard") ? "active" : ""}`}>
             <FaChartBar />
             <span>Dashboard</span>
           </Link>
         </li>
         <li>
-          <Link to="/executive-dashboard" style={itemStyle("/executive-dashboard")}>
+          <Link to="/executive-dashboard" className={`sidebar-link ${isLinkActive("/executive-dashboard") ? "active" : ""}`}>
             <FaBriefcase />
             <span>Executive Board</span>
           </Link>
         </li>
         <li>
-          <Link to="/connected-apis" style={itemStyle("/connected-apis")}>
+          <Link to="/connected-apis" className={`sidebar-link ${isLinkActive("/connected-apis") ? "active" : ""}`}>
             <FaServer />
             <span>Connected APIs</span>
           </Link>
         </li>
         <li>
-          <Link to="/logs" style={itemStyle("/logs")}>
+          <Link to="/logs" className={`sidebar-link ${isLinkActive("/logs") ? "active" : ""}`}>
             <FaList />
             <span>Log Explorer</span>
           </Link>
         </li>
         <li>
-          <Link to="/ai-insights" style={itemStyle("/ai-insights")}>
+          <Link to="/ai-insights" className={`sidebar-link ${isLinkActive("/ai-insights") ? "active" : ""}`}>
             <FaRobot />
             <span>AI Insights</span>
           </Link>
         </li>
         <li>
-          <Link to="/alerts" style={itemStyle("/alerts")}>
+          <Link to="/alerts" className={`sidebar-link ${isLinkActive("/alerts") ? "active" : ""}`}>
             <FaBell />
             <span>Alerts</span>
           </Link>
         </li>
         <li>
-          <Link to="/settings" style={itemStyle("/settings")}>
+          <Link to="/settings" className={`sidebar-link ${isLinkActive("/settings") ? "active" : ""}`}>
             <FaCog />
             <span>Settings</span>
           </Link>

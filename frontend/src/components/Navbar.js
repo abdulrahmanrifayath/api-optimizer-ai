@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
     FaBell,
     FaMoon,
+    FaSun,
     FaSearch,
     FaUserCircle,
     FaSignOutAlt,
@@ -97,13 +98,13 @@ function Navbar({ darkMode, setDarkMode }) {
 
     return (
         <header className="navbar">
-            <div className="logo" onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
+            <div className="logo" onClick={() => navigate("/dashboard")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
                 🚀 API Optimizer AI
             </div>
 
             {/* Navbar Search Form */}
-            <form onSubmit={handleSearchSubmit} className="navbar-search" style={{ position: "relative" }}>
-                <FaSearch style={{ color: "#9ca3af" }} />
+            <form onSubmit={handleSearchSubmit} className="navbar-search">
+                <FaSearch style={{ color: "var(--text-muted)" }} />
                 <input
                     type="text"
                     placeholder="Search APIs, endpoints, or logs (Press Enter)..."
@@ -130,18 +131,19 @@ function Navbar({ darkMode, setDarkMode }) {
                                 top: "45px",
                                 right: "0",
                                 width: "340px",
-                                backgroundColor: "#ffffff",
-                                borderRadius: "8px",
-                                boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                                border: "1px solid #e5e7eb",
+                                backgroundColor: "var(--bg-card)",
+                                backdropFilter: "blur(16px)",
+                                borderRadius: "16px",
+                                boxShadow: "var(--shadow-hover)",
+                                border: "1px solid var(--border-card)",
                                 zIndex: 1000,
                                 padding: "16px",
-                                color: "#1e293b",
+                                color: "var(--text-main)",
                             }}
                         >
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "8px" }}>
-                                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "bold" }}>🔔 Telemetry Alerts</h3>
-                                <button onClick={() => setShowNotifications(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", borderBottom: "1px solid var(--border-sidebar)", paddingBottom: "8px" }}>
+                                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "bold", color: "var(--text-heading)" }}>🔔 Telemetry Alerts</h3>
+                                <button onClick={() => setShowNotifications(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
                                     <FaTimes />
                                 </button>
                             </div>
@@ -151,27 +153,27 @@ function Navbar({ darkMode, setDarkMode }) {
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: "10px",
-                                            borderRadius: "6px",
-                                            backgroundColor: "#f8fafc",
-                                            borderLeft: `4px solid ${item.severity === "High" ? "#dc2626" : item.severity === "Medium" ? "#d97706" : "#16a34a"}`,
+                                            padding: "10px 12px",
+                                            borderRadius: "10px",
+                                            backgroundColor: "var(--table-row-bg)",
+                                            borderLeft: `4px solid ${item.severity === "High" ? "#ef4444" : item.severity === "Medium" ? "#f59e0b" : "#10b981"}`,
                                         }}
                                     >
-                                        <div style={{ fontSize: "13px", fontWeight: "bold", color: "#0f172a" }}>
-                                            {item.severity === "High" ? <FaExclamationTriangle style={{ color: "#dc2626", marginRight: "4px" }} /> : <FaCheckCircle style={{ color: "#16a34a", marginRight: "4px" }} />}
+                                        <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main)" }}>
+                                            {item.severity === "High" ? <FaExclamationTriangle style={{ color: "#ef4444", marginRight: "6px" }} /> : <FaCheckCircle style={{ color: "#10b981", marginRight: "6px" }} />}
                                             {item.title}
                                         </div>
-                                        <div style={{ fontSize: "12px", color: "#475569", marginTop: "3px" }}>
+                                        <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>
                                             {item.explanation || item.message}
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div style={{ marginTop: "12px", paddingTop: "8px", borderTop: "1px solid #f1f5f9", textAlign: "center" }}>
+                            <div style={{ marginTop: "12px", paddingTop: "8px", borderTop: "1px solid var(--border-sidebar)", textAlign: "center" }}>
                                 <button
                                     onClick={() => { setShowNotifications(false); navigate("/alerts"); }}
-                                    style={{ background: "none", border: "none", color: "#2563eb", fontWeight: "bold", fontSize: "13px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                                    style={{ background: "none", border: "none", color: "var(--text-active)", fontWeight: "bold", fontSize: "13px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}
                                 >
                                     View All Alerts <FaArrowRight />
                                 </button>
@@ -180,12 +182,12 @@ function Navbar({ darkMode, setDarkMode }) {
                     )}
                 </div>
 
-                <button className="icon-btn" onClick={() => setDarkMode(!darkMode)} title="Toggle Dark Mode">
-                    <FaMoon />
+                <button className="icon-btn" onClick={() => setDarkMode(!darkMode)} title={darkMode ? "Switch to Day Mode" : "Switch to Night Mode"}>
+                    {darkMode ? <FaSun style={{ color: "#f59e0b" }} /> : <FaMoon />}
                 </button>
 
                 <div className="profile" onClick={() => navigate("/settings")} style={{ cursor: "pointer" }} title="View Settings & Profile">
-                    <FaUserCircle size={28} style={{ color: "#2563eb" }} />
+                    <FaUserCircle size={28} style={{ color: "var(--text-active)" }} />
                     <span>{user?.name || "User"}</span>
                 </div>
 
