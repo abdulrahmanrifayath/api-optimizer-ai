@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import {
-    getApiLogs,
+    getLogs,
     getLogStats,
     getLogCharts,
     getEndpointAnalytics,
-    exportLogsFile,
+    exportLogs,
     clearLogs
 } from "../services/apiLogService";
 import {
@@ -72,7 +72,7 @@ function LogExplorer({ darkMode, setDarkMode }) {
     const fetchLogsData = async () => {
         setLoading(true);
         try {
-            const logsData = await getApiLogs({
+            const logsData = await getLogs({
                 page,
                 limit,
                 endpoint: searchEndpoint,
@@ -114,7 +114,7 @@ function LogExplorer({ darkMode, setDarkMode }) {
 
     const handleExport = async (format) => {
         try {
-            await exportLogsFile(format);
+            await exportLogs(format);
             showToast(`Telemetry logs exported as ${format.toUpperCase()}`);
         } catch (err) {
             showToast(`Failed to export ${format.toUpperCase()}`, "error");

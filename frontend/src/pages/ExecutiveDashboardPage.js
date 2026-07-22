@@ -4,9 +4,9 @@ import Sidebar from "../components/Sidebar";
 import {
     getExecutiveKpis,
     getExecutiveSummary,
-    getBenchmarkLeaderboard,
+    getBenchmarkComparison,
     getCostOptimization,
-    downloadExecutivePdf
+    downloadExecutivePdfReport
 } from "../services/reportService";
 import {
     FaFilePdf,
@@ -34,7 +34,7 @@ function ExecutiveDashboardPage({ darkMode, setDarkMode }) {
             const [kpiRes, summaryRes, benchmarkRes, costRes] = await Promise.all([
                 getExecutiveKpis().catch(() => null),
                 getExecutiveSummary().catch(() => null),
-                getBenchmarkLeaderboard().catch(() => []),
+                getBenchmarkComparison().catch(() => []),
                 getCostOptimization().catch(() => null),
             ]);
 
@@ -55,7 +55,7 @@ function ExecutiveDashboardPage({ darkMode, setDarkMode }) {
 
     const handleDownloadPdf = async () => {
         try {
-            await downloadExecutivePdf();
+            await downloadExecutivePdfReport();
         } catch (err) {
             alert("Failed to generate PDF report.");
         }
