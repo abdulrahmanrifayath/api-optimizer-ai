@@ -56,19 +56,19 @@ function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link to="/dashboard" style={itemStyle("/ai-insights")}>
+          <Link to="/ai-insights" style={itemStyle("/ai-insights")}>
             <FaRobot />
             <span>AI Insights</span>
           </Link>
         </li>
         <li>
-          <Link to="/dashboard" style={itemStyle("/alerts")}>
+          <Link to="/alerts" style={itemStyle("/alerts")}>
             <FaBell />
             <span>Alerts</span>
           </Link>
         </li>
         <li>
-          <Link to="/dashboard" style={itemStyle("/settings")}>
+          <Link to="/settings" style={itemStyle("/settings")}>
             <FaCog />
             <span>Settings</span>
           </Link>

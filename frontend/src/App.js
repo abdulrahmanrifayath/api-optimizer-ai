@@ -7,6 +7,9 @@ import Register from "./pages/Register";
 import ConnectedApis from "./pages/ConnectedApis";
 import LogExplorer from "./pages/LogExplorer";
 import ExecutiveDashboardPage from "./pages/ExecutiveDashboardPage";
+import AIInsightsPage from "./pages/AIInsightsPage";
+import AlertsPage from "./pages/AlertsPage";
+import SettingsPage from "./pages/SettingsPage";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import HomeRedirect from "./auth/HomeRedirect";
@@ -22,13 +25,11 @@ function App() {
                     {/* Home */}
                     <Route path="/" element={<HomeRedirect />} />
 
-                    {/* Login */}
+                    {/* Auth */}
                     <Route path="/login" element={<Login />} />
-
-                    {/* Register */}
                     <Route path="/register" element={<Register />} />
 
-                    {/* Dashboard */}
+                    {/* Protected Main Pages */}
                     <Route
                         path="/dashboard"
                         element={
@@ -38,7 +39,15 @@ function App() {
                         }
                     />
 
-                    {/* Connected APIs */}
+                    <Route
+                        path="/executive-dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <ExecutiveDashboardPage darkMode={darkMode} setDarkMode={setDarkMode} />
+                            </ProtectedRoute>
+                        }
+                    />
+
                     <Route
                         path="/connected-apis"
                         element={
@@ -48,7 +57,6 @@ function App() {
                         }
                     />
 
-                    {/* Log Explorer */}
                     <Route
                         path="/logs"
                         element={
@@ -58,12 +66,29 @@ function App() {
                         }
                     />
 
-                    {/* Executive Dashboard */}
                     <Route
-                        path="/executive-dashboard"
+                        path="/ai-insights"
                         element={
                             <ProtectedRoute>
-                                <ExecutiveDashboardPage darkMode={darkMode} setDarkMode={setDarkMode} />
+                                <AIInsightsPage darkMode={darkMode} setDarkMode={setDarkMode} />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/alerts"
+                        element={
+                            <ProtectedRoute>
+                                <AlertsPage darkMode={darkMode} setDarkMode={setDarkMode} />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/settings"
+                        element={
+                            <ProtectedRoute>
+                                <SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />
                             </ProtectedRoute>
                         }
                     />
