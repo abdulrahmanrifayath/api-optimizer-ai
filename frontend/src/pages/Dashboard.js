@@ -33,9 +33,11 @@ import {
   FaExclamationTriangle,
   FaPlay,
   FaBriefcase,
-  FaFileDownload,
-  FaChartLine,
-  FaBrain
+  FaList,
+  FaBrain,
+  FaMagic,
+  FaRocket,
+  FaFilePdf
 } from "react-icons/fa";
 
 import "../styles/dashboard.css";
@@ -110,11 +112,11 @@ function Dashboard({ darkMode, setDarkMode }) {
           height: "100vh",
           fontSize: "20px",
           fontWeight: "bold",
-          color: "#2563eb",
+          color: "#4f46e5",
           gap: "15px"
         }}
       >
-        <div>Loading AI Optimizer Control Center...</div>
+        <div>✨ Loading Canva-Style AI Optimizer Control Center...</div>
         <div style={{ fontSize: "14px", color: "#6b7280" }}>Fetching live API telemetry & AI models...</div>
       </div>
     );
@@ -128,52 +130,53 @@ function Dashboard({ darkMode, setDarkMode }) {
         <Sidebar />
 
         <main className="content">
-          {/* Hero Welcome & Control Banner */}
+          {/* Canva-Style Hero Banner */}
           <div className="hero-banner">
             <div>
-              <div className="live-indicator" style={{ marginBottom: "10px" }}>
+              <div className="live-indicator" style={{ marginBottom: "12px" }}>
                 <span className="pulse-dot"></span>
-                LIVE TELEMETRY ENGINE • AUTO-REFRESH 5s
+                ✨ AI-POWERED TELEMETRY ENGINE • AUTO-REFRESH 5s
               </div>
-              <h1>Welcome to AI Optimizer Control Center 👋</h1>
-              <p>Real-time HTTP log ingestion, predictive ML traffic forecasting, and automated anomaly detection.</p>
+              <h1>Create, Monitor & Optimize APIs Like Magic ✨</h1>
+              <p>Real-time HTTP log ingestion, predictive ML traffic forecasting, and executive business reports.</p>
             </div>
 
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", zIndex: 1 }}>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", zIndex: 1 }}>
               <button
                 onClick={() => navigate("/connected-apis")}
                 style={{
-                  padding: "10px 16px",
+                  padding: "12px 20px",
                   backgroundColor: "#ffffff",
-                  color: "#1e40af",
+                  color: "#4a148c",
                   border: "none",
-                  borderRadius: "8px",
+                  borderRadius: "30px",
                   fontWeight: "bold",
-                  fontSize: "13px",
+                  fontSize: "14px",
                   cursor: "pointer",
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "6px",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                  gap: "8px",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                  transition: "transform 0.2s"
                 }}
               >
-                <FaPlay style={{ fontSize: "11px" }} /> Connect APIs
+                <FaRocket style={{ color: "#7c3aed" }} /> Connect API
               </button>
               <button
                 onClick={() => navigate("/executive-dashboard")}
                 style={{
-                  padding: "10px 16px",
-                  backgroundColor: "rgba(255,255,255,0.15)",
+                  padding: "12px 20px",
+                  backgroundColor: "rgba(255,255,255,0.18)",
                   color: "#ffffff",
                   border: "1px solid rgba(255,255,255,0.3)",
-                  borderRadius: "8px",
+                  borderRadius: "30px",
                   fontWeight: "bold",
-                  fontSize: "13px",
+                  fontSize: "14px",
                   cursor: "pointer",
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "6px",
-                  backdropFilter: "blur(8px)"
+                  gap: "8px",
+                  backdropFilter: "blur(12px)"
                 }}
               >
                 <FaBriefcase /> Executive Board
@@ -181,23 +184,66 @@ function Dashboard({ darkMode, setDarkMode }) {
             </div>
           </div>
 
+          {/* Canva Quick Action Row */}
+          <div className="canva-action-grid">
+            <div className="canva-action-card" onClick={() => navigate("/connected-apis")}>
+              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #7c3aed, #c084fc)" }}>
+                <FaServer />
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Connect REST API</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Add & test API endpoints</p>
+              </div>
+            </div>
+
+            <div className="canva-action-card" onClick={() => navigate("/logs")}>
+              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #2563eb, #38bdf8)" }}>
+                <FaList />
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Log Explorer</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Live telemetry & exports</p>
+              </div>
+            </div>
+
+            <div className="canva-action-card" onClick={() => navigate("/ai-insights")}>
+              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #db2777, #f472b6)" }}>
+                <FaMagic />
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>AI Insights</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>ML predictions & forecast</p>
+              </div>
+            </div>
+
+            <div className="canva-action-card" onClick={() => navigate("/executive-dashboard")}>
+              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #ea580c, #fb923c)" }}>
+                <FaFilePdf />
+              </div>
+              <div>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Executive Report</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Generate PDF reports</p>
+              </div>
+            </div>
+          </div>
+
           {/* Metric Cards Grid */}
           <div className="cards">
             <MetricCard
-              title="AI Score"
+              title="AI Telemetry Score"
               value={dashboard.score?.score || 95}
               decimals={0}
-              color="#2563eb"
+              color="#7c3aed"
               icon={<FaRobot />}
             />
             <MetricCard
-              title="Total Requests"
+              title="Total HTTP Requests"
               value={dashboard.score?.metrics?.total_requests || 0}
-              color="#16a34a"
+              color="#10b981"
               icon={<FaServer />}
             />
             <MetricCard
-              title="Avg Latency"
+              title="Avg Latency (ms)"
               value={(dashboard.score?.metrics?.avg_response_time || 0) * 1000}
               decimals={1}
               color="#f59e0b"
@@ -207,7 +253,7 @@ function Dashboard({ darkMode, setDarkMode }) {
               title="Error Rate (%)"
               value={dashboard.score?.metrics?.error_rate || 0}
               decimals={2}
-              color="#dc2626"
+              color="#ef4444"
               icon={<FaExclamationTriangle />}
             />
           </div>
@@ -216,23 +262,25 @@ function Dashboard({ darkMode, setDarkMode }) {
           {businessInsights && (
             <div
               style={{
-                backgroundColor: darkMode ? "#1e293b" : "#eff6ff",
+                backgroundColor: darkMode ? "rgba(30, 27, 75, 0.6)" : "rgba(238, 242, 255, 0.9)",
+                backdropFilter: "blur(12px)",
                 border: "1px solid",
-                borderColor: darkMode ? "#334155" : "#bfdbfe",
-                borderRadius: "12px",
-                padding: "16px 20px",
-                marginBottom: "30px",
+                borderColor: darkMode ? "#4338ca" : "#c7d2fe",
+                borderRadius: "20px",
+                padding: "20px 24px",
+                marginBottom: "32px",
                 display: "flex",
                 alignItems: "center",
-                gap: "12px"
+                gap: "16px",
+                boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.1)"
               }}
             >
-              <FaBrain style={{ fontSize: "24px", color: "#2563eb", flexShrink: 0 }} />
+              <FaBrain style={{ fontSize: "28px", color: "#6366f1", flexShrink: 0 }} />
               <div>
-                <h4 style={{ margin: "0 0 4px 0", color: darkMode ? "#f8fafc" : "#1e3a8a", fontSize: "14px", fontWeight: "bold" }}>
-                  AI Business Insight ({businessInsights.summary_title || "Optimization Notice"})
+                <h4 style={{ margin: "0 0 4px 0", color: darkMode ? "#e0e7ff" : "#312e81", fontSize: "15px", fontWeight: "bold" }}>
+                  AI Business Insight ({businessInsights.summary_title || "System Health"})
                 </h4>
-                <p style={{ margin: 0, fontSize: "13px", color: darkMode ? "#cbd5e1" : "#1e40af" }}>
+                <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#c7d2fe" : "#4338ca" }}>
                   {businessInsights.plain_english_summary || "System operating efficiently with low latency and optimal throughput."}
                 </p>
               </div>
@@ -264,7 +312,7 @@ function Dashboard({ darkMode, setDarkMode }) {
           </div>
 
           {/* AI Recommendations Module */}
-          <div style={{ marginTop: "30px" }}>
+          <div style={{ marginTop: "32px" }}>
             <AIRecommendations />
           </div>
 
