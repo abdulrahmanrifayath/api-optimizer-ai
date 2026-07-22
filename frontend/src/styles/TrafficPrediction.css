@@ -1,48 +1,65 @@
-.prediction-card{
-    margin-top:30px;
-    background:white;
-    padding:25px;
-    border-radius:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,.08);
+.prediction-card {
+    margin-top: 0;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 28px;
+    border-radius: 24px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    color: var(--text-main);
 }
 
-.prediction-card h2{
-    margin-bottom:20px;
-    color:#2563eb;
+.prediction-card h2 {
+    margin-bottom: 20px;
+    color: var(--text-heading) !important;
+    font-size: 18px;
+    font-weight: 800;
 }
 
-.prediction-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
+.prediction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
 }
 
-.prediction-box{
-    text-align:center;
-    background:#f8fafc;
-    padding:25px;
-    border-radius:12px;
+.prediction-box {
+    text-align: center;
+    background: var(--table-row-bg);
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--table-border);
 }
 
-.prediction-box h3{
-    color:#64748b;
-    margin-bottom:10px;
+.prediction-box h3 {
+    color: var(--text-muted) !important;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
-.prediction-box h1{
-    font-size:42px;
-    color:#2563eb;
+.prediction-box h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #a855f7 !important;
 }
 
-.prediction-box span{
-    color:#64748b;
+.prediction-box span {
+    color: var(--text-muted) !important;
+    font-size: 13px;
+    font-weight: bold;
 }
 
-.prediction-footer{
-    margin-top:25px;
-    padding:16px;
-    background:#eff6ff;
-    border-left:5px solid #2563eb;
-    border-radius:10px;
-    font-weight:bold;
+.prediction-footer {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: var(--table-row-bg);
+    border-left: 5px solid #a855f7;
+    border-radius: 14px;
+    font-weight: bold;
+    color: var(--text-main);
+    border-top: 1px solid var(--table-border);
+    border-right: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
 }

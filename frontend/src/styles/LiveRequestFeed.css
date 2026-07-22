@@ -1,75 +1,77 @@
-.live-feed{
-
-    margin-top:30px;
-
-    background:white;
-
-    padding:25px;
-
-    border-radius:16px;
-
-    box-shadow:0 6px 18px rgba(0,0,0,.08);
-
+.live-feed {
+    margin-top: 0;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 28px;
+    border-radius: 24px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow-card);
+    color: var(--text-main);
 }
 
-.live-feed table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    margin-top:20px;
-
+.live-feed h2 {
+    color: var(--text-heading) !important;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 18px;
 }
 
-.live-feed th{
-
-    background:#2563eb;
-
-    color:white;
-
-    padding:14px;
-
+.live-feed table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    margin-top: 16px;
 }
 
-.live-feed td{
-
-    padding:12px;
-
-    border-bottom:1px solid #eee;
-
+.live-feed th {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
-.live-feed tr:hover{
-
-    background:#f8fafc;
-
+.live-feed td {
+    padding: 12px 14px;
+    background: var(--table-row-bg);
+    color: var(--text-main);
+    border-top: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
 }
 
-.status-success{
-
-    background:#dcfce7;
-
-    color:#15803d;
-
-    padding:5px 12px;
-
-    border-radius:20px;
-
-    font-weight:bold;
-
+.live-feed td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-left: 1px solid var(--table-border);
 }
 
-.status-error{
+.live-feed td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 1px solid var(--table-border);
+}
 
-    background:#fee2e2;
+.live-feed tr:hover td {
+    background: var(--table-row-hover);
+}
 
-    color:#b91c1c;
+.status-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 12px;
+}
 
-    padding:5px 12px;
-
-    border-radius:20px;
-
-    font-weight:bold;
-
+.status-error {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 12px;
 }

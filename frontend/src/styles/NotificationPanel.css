@@ -1,39 +1,45 @@
 .notification-panel {
-    margin-top: 30px;
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    margin-top: 0;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-card);
+    color: var(--text-main);
 }
 
 .notification-panel h2 {
     margin-bottom: 20px;
-    color: #1e293b;
+    color: var(--text-heading) !important;
+    font-size: 18px;
+    font-weight: 800;
 }
 
 .notification {
     display: flex;
     align-items: center;
-    gap: 18px;
-
-    padding: 16px;
-    margin-bottom: 16px;
-
-    border-left: 6px solid #2563eb;
-    border-radius: 10px;
-
-    background: #f8fafc;
-
-    transition: .25s;
+    gap: 16px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    border-left: 5px solid #a855f7;
+    border-radius: 16px;
+    background: var(--table-row-bg);
+    border-top: 1px solid var(--table-border);
+    border-right: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
+    transition: all 0.25s ease;
 }
 
 .notification:hover {
     transform: translateX(6px);
-    box-shadow: 0 5px 12px rgba(0,0,0,.08);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-card-hover);
 }
 
 .notification-icon {
-    font-size: 28px;
+    font-size: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -44,27 +50,27 @@
 }
 
 .notification-content h4 {
-    margin-bottom: 6px;
-    font-size: 17px;
+    margin-bottom: 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading) !important;
 }
 
 .notification-content p {
-    color: #64748b;
-    font-size: 14px;
+    color: var(--text-muted) !important;
+    font-size: 13px;
 }
 
 /* Success */
-
 .notification.success {
-    border-left-color: #16a34a;
+    border-left-color: #10b981;
 }
 
 .notification.success .notification-icon {
-    color: #16a34a;
+    color: #10b981;
 }
 
 /* Warning */
-
 .notification.warning {
     border-left-color: #f59e0b;
 }
@@ -74,21 +80,19 @@
 }
 
 /* Info */
-
 .notification.info {
-    border-left-color: #2563eb;
+    border-left-color: #38bdf8;
 }
 
 .notification.info .notification-icon {
-    color: #2563eb;
+    color: #38bdf8;
 }
 
 /* AI */
-
 .notification.ai {
-    border-left-color: #9333ea;
+    border-left-color: #a855f7;
 }
 
 .notification.ai .notification-icon {
-    color: #9333ea;
+    color: #a855f7;
 }
