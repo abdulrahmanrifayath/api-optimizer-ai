@@ -7,14 +7,14 @@ import {
   Legend
 } from "recharts";
 
-const COLORS = [
-  "#2563eb",
-  "#16a34a",
-  "#f59e0b",
-  "#dc2626",
-  "#7c3aed",
+const CYBER_NEON_COLORS = [
+  "#a855f7",
   "#06b6d4",
-  "#ec4899"
+  "#ec4899",
+  "#10b981",
+  "#f59e0b",
+  "#818cf8",
+  "#f472b6"
 ];
 
 function EndpointPieChart({ dashboard }) {
@@ -31,7 +31,7 @@ function EndpointPieChart({ dashboard }) {
 
   return (
     <div className="chart-card">
-      <h3>🥧 Endpoint Usage</h3>
+      <h3>🥧 Endpoint Traffic Distribution</h3>
 
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
@@ -40,17 +40,28 @@ function EndpointPieChart({ dashboard }) {
             dataKey="value"
             nameKey="name"
             outerRadius={100}
+            innerRadius={45}
+            paddingAngle={5}
             label
           >
             {data.map((entry, index) => (
               <Cell
-                key={index}
-                fill={COLORS[index % COLORS.length]}
+                key={`cell-${index}`}
+                fill={CYBER_NEON_COLORS[index % CYBER_NEON_COLORS.length]}
+                stroke="rgba(192, 132, 252, 0.3)"
+                strokeWidth={2}
               />
             ))}
           </Pie>
 
-          <Tooltip />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(18, 13, 36, 0.95)",
+              borderColor: "rgba(192, 132, 252, 0.4)",
+              borderRadius: "12px",
+              color: "#f8fafc"
+            }}
+          />
           <Legend />
         </PieChart>
       </ResponsiveContainer>

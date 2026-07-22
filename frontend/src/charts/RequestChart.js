@@ -1,6 +1,6 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -23,21 +23,36 @@ function RequestChart({ dashboard }) {
 
   return (
     <div className="chart-card">
-      <h3>📈 Request Trend</h3>
+      <h3>📈 Request Trend Telemetry</h3>
 
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3"/>
-          <XAxis dataKey="day"/>
-          <YAxis/>
-          <Tooltip/>
-          <Line
+        <AreaChart data={data}>
+          <defs>
+            <linearGradient id="cyberVioletGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#a855f7" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#a855f7" stopOpacity={0.05} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(192, 132, 252, 0.15)" />
+          <XAxis dataKey="day" stroke="var(--text-muted)" />
+          <YAxis stroke="var(--text-muted)" />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "rgba(18, 13, 36, 0.95)",
+              borderColor: "rgba(192, 132, 252, 0.4)",
+              borderRadius: "12px",
+              color: "#f8fafc"
+            }}
+          />
+          <Area
             type="monotone"
             dataKey="requests"
-            stroke="#2563eb"
+            stroke="#c084fc"
             strokeWidth={3}
+            fillOpacity={1}
+            fill="url(#cyberVioletGradient)"
           />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );
