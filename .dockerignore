@@ -1,0 +1,40 @@
+# Docker build context ignore rules
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node / React
+node_modules/
+frontend/build/
+frontend/node_modules/
+.npm
+
+# Version Control
+.git/
+.gitignore
+.gitattributes
+
+# IDE / AntiGravity
+.vscode/
+.idea/
+.gemini/
+*.db
+*.sqlite3
+app.db
+
+# Documentation / Scratch
+scratch/
+brain/
+*.md
+
+# Environment secrets
+.env
+.env.local
