@@ -1,61 +1,102 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { getLogs, getLogStats, getLogCharts, getEndpointAnalytics, exportLogs, ingestLog, clearLogs } from "../services/apiLogService";
-import { FaSearch, FaFilter, FaRedo, FaTrash, FaPlus, FaList, FaCheckCircle, FaClock, FaDownload, FaChartLine, FaServer } from "react-icons/fa";
+import {
+    getApiLogs,
+    getLogStats,
+    getLogCharts,
+    getEndpointAnalytics,
+    exportLogsFile,
+    clearLogs
+} from "../services/apiLogService";
+import {
+    FaList,
+    FaCheckCircle,
+    FaClock,
+    FaSearch,
+    FaFileCsv,
+    FaFileCode,
+    FaFilePdf,
+    FaTrash,
+    FaServer,
+    FaChartLine,
+    FaCalendarAlt,
+    FaInfoCircle,
+    FaArrowLeft,
+    FaArrowRight
+} from "react-icons/fa";
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    CartesianGrid,
+    BarChart,
+    Bar
+} from "recharts";
 import "../styles/dashboard.css";
 
 function LogExplorer({ darkMode, setDarkMode }) {
-    const [activeTab, setActiveTab] = useState("table"); // "table", "analytics", "charts"
     const [logs, setLogs] = useState([]);
     const [stats, setStats] = useState(null);
-    const [chartsData, setChartsData] = useState(null);
-    const [endpointAnalytics, setEndpointAnalytics] = useState([]);
+    const [charts, setCharts] = useState(null);
+    const [analytics, setAnalytics] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [expandedLogId, setExpandedLogId] = useState(null);
+    const [activeTab, setActiveTab] = useState("table");
 
-    // Filter states
+    // Pagination & Filters
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalLogs, setTotalLogs] = useState(0);
+
     const [searchEndpoint, setSearchEndpoint] = useState("");
     const [selectedMethod, setSelectedMethod] = useState("");
     const [selectedStatusCategory, setSelectedStatusCategory] = useState("");
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
 
-    // Modal state for manual test ingestion
-    const [showIngestModal, setShowIngestModal] = useState(false);
-    const [ingestForm, setIngestForm] = useState({
-        endpoint: "/api/v1/users",
-        method: "GET",
-        status_code: 200,
-        response_time: 45.5,
-        response_size: 1200,
-    });
+    // Details Modal State
+    const [selectedLog, setSelectedLog] = useState(null);
+
+    // Toast alert state
+    const [toastMessage, setToastMessage] = useState(null);
+
+    const showToast = (msg, type = "success") => {
+        setToastMessage({ message: msg, type });
+        setTimeout(() => setToastMessage(null), 4000);
+    };
 
     const fetchLogsData = async () => {
         setLoading(true);
         try {
-            const [logsRes, statsRes, chartsRes, analyticsRes] = await Promise.all([
-                getLogs({
-                    endpoint: searchEndpoint,
-                    method: selectedMethod,
-                    status_category: selectedStatusCategory,
-                    page: page,
-                    limit: 15,
-                }),
-                getLogStats(),
-                getLogCharts(24).catch(() => null),
-                getEndpointAnalytics().catch(() => []),
-            ]);
+            const logsData = await getApiLogs({
+                page,
+                limit,
+                endpoint: searchEndpoint,
+                method: selectedMethod,
+                status_category: selectedStatusCategory,
+                date_from: dateFrom,
+                date_to: dateTo,
+            });
 
-            setLogs(logsRes.items || []);
-            setTotalPages(logsRes.total_pages || 1);
-            setTotalItems(logsRes.total || 0);
-            setStats(statsRes);
-            if (chartsRes) setChartsData(chartsRes);
-            if (analyticsRes) setEndpointAnalytics(analyticsRes);
+            setLogs(logsData.items || []);
+            setTotalPages(logsData.total_pages || 1);
+            setTotalLogs(logsData.total_items || 0);
+
+            const statsData = await getLogStats();
+            setStats(statsData);
+
+            const chartsData = await getLogCharts();
+            setCharts(chartsData);
+
+            const analyticsData = await getEndpointAnalytics();
+            setAnalytics(analyticsData);
         } catch (err) {
-            console.error("Failed to load telemetry logs:", err);
+            console.error("Failed to fetch API logs:", err);
+            showToast("Failed to fetch HTTP telemetry logs", "error");
         } finally {
             setLoading(false);
         }
@@ -63,7 +104,7 @@ function LogExplorer({ darkMode, setDarkMode }) {
 
     useEffect(() => {
         fetchLogsData();
-    }, [page, selectedMethod, selectedStatusCategory]);
+    }, [page, limit, selectedMethod, selectedStatusCategory]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -71,126 +112,107 @@ function LogExplorer({ darkMode, setDarkMode }) {
         fetchLogsData();
     };
 
-    const handleResetFilters = () => {
-        setSearchEndpoint("");
-        setSelectedMethod("");
-        setSelectedStatusCategory("");
-        setPage(1);
-    };
-
-    const handleExport = (format) => {
+    const handleExport = async (format) => {
         try {
-            exportLogs(format);
+            await exportLogsFile(format);
+            showToast(`Telemetry logs exported as ${format.toUpperCase()}`);
         } catch (err) {
-            alert(`Failed to export logs as ${format.toUpperCase()}`);
-        }
-    };
-
-    const handleIngestSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await ingestLog(ingestForm);
-            setShowIngestModal(false);
-            fetchLogsData();
-        } catch (err) {
-            alert("Log ingestion failed");
-            console.error(err);
+            showToast(`Failed to export ${format.toUpperCase()}`, "error");
         }
     };
 
     const handleClearLogs = async () => {
-        if (!window.confirm("Are you sure you want to purge all telemetry logs?")) return;
+        if (!window.confirm("Are you sure you want to clear all telemetry logs?")) return;
         try {
             await clearLogs();
+            showToast("All HTTP telemetry logs cleared");
             fetchLogsData();
         } catch (err) {
-            console.error(err);
+            showToast("Failed to clear logs", "error");
         }
     };
 
-    const getMethodBadgeStyle = (method) => {
-        switch (method.toUpperCase()) {
-            case "GET":
-                return { backgroundColor: "#dbeafe", color: "#1e40af" };
-            case "POST":
-                return { backgroundColor: "#dcfce7", color: "#166534" };
-            case "PUT":
-                return { backgroundColor: "#fef3c7", color: "#92400e" };
-            case "DELETE":
-                return { backgroundColor: "#fee2e2", color: "#991b1b" };
-            default:
-                return { backgroundColor: "#e5e7eb", color: "#374151" };
-        }
-    };
-
-    const getStatusBadgeStyle = (code) => {
-        if (code >= 200 && code < 300) {
-            return { backgroundColor: "#dcfce7", color: "#15803d" };
-        } else if (code >= 300 && code < 400) {
-            return { backgroundColor: "#fef3c7", color: "#b45309" };
-        } else {
-            return { backgroundColor: "#fee2e2", color: "#b91c1c" };
-        }
-    };
-
-    const getLatencyColor = (ms) => {
-        if (ms < 100) return "#16a34a";
-        if (ms < 500) return "#ea580c";
-        return "#dc2626";
+    const getStatusColor = (code) => {
+        if (code >= 200 && code < 300) return "#10b981";
+        if (code >= 300 && code < 400) return "#38bdf8";
+        if (code >= 400 && code < 500) return "#f59e0b";
+        return "#ef4444";
     };
 
     return (
         <div className={`dashboard ${darkMode ? "dark" : ""}`}>
             <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+
             <div className="dashboard-body">
                 <Sidebar />
+
                 <main className="content">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+                    {/* Toast Notification Alert */}
+                    {toastMessage && (
+                        <div
+                            style={{
+                                position: "fixed",
+                                top: "80px",
+                                right: "20px",
+                                padding: "12px 20px",
+                                borderRadius: "12px",
+                                color: "#ffffff",
+                                backgroundColor: toastMessage.type === "error" ? "#ef4444" : "#10b981",
+                                boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+                                zIndex: 2000,
+                                fontWeight: "bold",
+                                fontSize: "14px",
+                            }}
+                        >
+                            {toastMessage.message}
+                        </div>
+                    )}
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "10px" }}>
                         <div>
-                            <h1>API Log Collection & Telemetry Explorer</h1>
-                            <p style={{ color: "#6b7280", margin: "4px 0 0 0" }}>
-                                Real-time traffic ingestion, HTTP telemetry logs, and response latency analysis.
+                            <h1 style={{ color: "var(--text-heading)" }}><FaList style={{ color: "#38bdf8", marginRight: "10px" }} /> API Log Explorer & Ingestion Engine</h1>
+                            <p style={{ color: "var(--text-muted)", margin: "4px 0 0 0" }}>
+                                Live HTTP telemetry streams, endpoint performance leaderboards, and CSV/JSON/PDF exports.
                             </p>
                         </div>
-                        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                            <button onClick={() => handleExport("csv")} style={btnSecondaryStyle}>
-                                <FaDownload style={{ marginRight: "4px" }} /> CSV
+
+                        {/* Export Action Buttons */}
+                        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                            <button onClick={() => handleExport("csv")} style={{ ...btnPrimaryStyle, backgroundColor: "#10b981" }} title="Export as CSV">
+                                <FaFileCsv style={{ marginRight: "6px" }} /> CSV
                             </button>
-                            <button onClick={() => handleExport("json")} style={btnSecondaryStyle}>
-                                <FaDownload style={{ marginRight: "4px" }} /> JSON
+                            <button onClick={() => handleExport("json")} style={{ ...btnPrimaryStyle, backgroundColor: "#38bdf8" }} title="Export as JSON">
+                                <FaFileCode style={{ marginRight: "6px" }} /> JSON
                             </button>
-                            <button onClick={() => handleExport("pdf")} style={btnSecondaryStyle}>
-                                <FaDownload style={{ marginRight: "4px" }} /> PDF
+                            <button onClick={() => handleExport("pdf")} style={{ ...btnPrimaryStyle, backgroundColor: "#ea580c" }} title="Export as PDF Report">
+                                <FaFilePdf style={{ marginRight: "6px" }} /> PDF
                             </button>
-                            <button onClick={() => setShowIngestModal(true)} style={btnPrimaryStyle}>
-                                <FaPlus style={{ marginRight: "4px" }} /> Ingest Log
-                            </button>
-                            <button onClick={handleClearLogs} style={btnDangerStyle}>
-                                <FaTrash style={{ marginRight: "4px" }} /> Clear
+                            <button onClick={handleClearLogs} style={btnDangerStyle} title="Clear Telemetry Logs">
+                                <FaTrash style={{ marginRight: "6px" }} /> Clear
                             </button>
                         </div>
                     </div>
 
                     {/* Summary Stat Cards */}
                     {stats && (
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "15px", marginBottom: "20px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "24px" }}>
                             <div style={cardStyle}>
                                 <div style={cardTitleStyle}><FaList style={{ marginRight: "6px" }} /> Total Logs</div>
                                 <div style={cardValueStyle}>{stats.total_logs}</div>
                             </div>
                             <div style={cardStyle}>
-                                <div style={cardTitleStyle}><FaCheckCircle style={{ marginRight: "6px", color: "#16a34a" }} /> Success Rate</div>
-                                <div style={{ ...cardValueStyle, color: "#16a34a" }}>
+                                <div style={cardTitleStyle}><FaCheckCircle style={{ marginRight: "6px", color: "#10b981" }} /> Success Rate</div>
+                                <div style={{ ...cardValueStyle, color: "#10b981" }}>
                                     {stats.total_logs > 0 ? ((stats.success_count / stats.total_logs) * 100).toFixed(1) : 100}%
                                 </div>
                             </div>
                             <div style={cardStyle}>
-                                <div style={cardTitleStyle}><FaClock style={{ marginRight: "6px", color: "#0284c7" }} /> Avg Latency</div>
+                                <div style={cardTitleStyle}><FaClock style={{ marginRight: "6px", color: "#38bdf8" }} /> Avg Latency</div>
                                 <div style={cardValueStyle}>{stats.avg_response_time} ms</div>
                             </div>
                             <div style={cardStyle}>
                                 <div style={cardTitleStyle}>Total Errors</div>
-                                <div style={{ ...cardValueStyle, color: stats.error_count > 0 ? "#dc2626" : "#374151" }}>
+                                <div style={{ ...cardValueStyle, color: stats.error_count > 0 ? "#ef4444" : "var(--text-main)" }}>
                                     {stats.error_count}
                                 </div>
                             </div>
@@ -198,22 +220,22 @@ function LogExplorer({ darkMode, setDarkMode }) {
                     )}
 
                     {/* Navigation Tabs */}
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #e5e7eb", paddingBottom: "10px" }}>
+                    <div style={{ display: "flex", gap: "12px", marginBottom: "24px", borderBottom: "1px solid var(--border-card)", paddingBottom: "12px" }}>
                         <button
                             onClick={() => setActiveTab("table")}
-                            style={{ ...tabBtnStyle, borderBottom: activeTab === "table" ? "2px solid #2563eb" : "none", color: activeTab === "table" ? "#2563eb" : "#4b5563" }}
+                            style={{ ...tabBtnStyle, borderBottom: activeTab === "table" ? "2px solid #a855f7" : "none", color: activeTab === "table" ? "var(--text-active)" : "var(--text-muted)" }}
                         >
                             <FaList style={{ marginRight: "6px" }} /> Live Telemetry Table
                         </button>
                         <button
                             onClick={() => setActiveTab("analytics")}
-                            style={{ ...tabBtnStyle, borderBottom: activeTab === "analytics" ? "2px solid #2563eb" : "none", color: activeTab === "analytics" ? "#2563eb" : "#4b5563" }}
+                            style={{ ...tabBtnStyle, borderBottom: activeTab === "analytics" ? "2px solid #a855f7" : "none", color: activeTab === "analytics" ? "var(--text-active)" : "var(--text-muted)" }}
                         >
                             <FaServer style={{ marginRight: "6px" }} /> Endpoint Analytics Leaderboard
                         </button>
                         <button
                             onClick={() => setActiveTab("charts")}
-                            style={{ ...tabBtnStyle, borderBottom: activeTab === "charts" ? "2px solid #2563eb" : "none", color: activeTab === "charts" ? "#2563eb" : "#4b5563" }}
+                            style={{ ...tabBtnStyle, borderBottom: activeTab === "charts" ? "2px solid #a855f7" : "none", color: activeTab === "charts" ? "var(--text-active)" : "var(--text-muted)" }}
                         >
                             <FaChartLine style={{ marginRight: "6px" }} /> Charts & Trends
                         </button>
@@ -223,16 +245,16 @@ function LogExplorer({ darkMode, setDarkMode }) {
                     {activeTab === "table" && (
                         <>
                             {/* Filter Toolbar */}
-                            <div style={{ backgroundColor: "#ffffff", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "20px" }}>
-                                <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                            <div className="chart-card" style={{ padding: "18px 24px", marginBottom: "24px" }}>
+                                <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "14px", flexWrap: "wrap", alignItems: "center" }}>
                                     <div style={{ position: "relative", flex: "1 1 240px" }}>
                                         <input
                                             placeholder="Search by endpoint path..."
                                             value={searchEndpoint}
                                             onChange={(e) => setSearchEndpoint(e.target.value)}
-                                            style={{ ...inputStyle, width: "100%", paddingLeft: "32px" }}
+                                            style={{ ...inputStyle, width: "100%", paddingLeft: "36px" }}
                                         />
-                                        <FaSearch style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+                                        <FaSearch style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                                     </div>
 
                                     <select value={selectedMethod} onChange={(e) => setSelectedMethod(e.target.value)} style={selectStyle}>
@@ -251,79 +273,85 @@ function LogExplorer({ darkMode, setDarkMode }) {
                                         <option value="5xx">5xx Server Error</option>
                                     </select>
 
-                                    <button type="submit" style={btnPrimaryStyle}>
-                                        <FaFilter style={{ marginRight: "6px" }} /> Filter
-                                    </button>
+                                    <input
+                                        type="date"
+                                        value={dateFrom}
+                                        onChange={(e) => setDateFrom(e.target.value)}
+                                        style={inputStyle}
+                                        title="Date From"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={dateTo}
+                                        onChange={(e) => setDateTo(e.target.value)}
+                                        style={inputStyle}
+                                        title="Date To"
+                                    />
 
-                                    <button type="button" onClick={handleResetFilters} style={btnSecondaryStyle}>
-                                        <FaRedo style={{ marginRight: "6px" }} /> Reset
-                                    </button>
+                                    <button type="submit" style={btnPrimaryStyle}>Search</button>
                                 </form>
                             </div>
 
-                            {/* Logs Table */}
-                            <div style={{ backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e5e7eb", overflow: "hidden" }}>
+                            {/* Telemetry Logs Table */}
+                            <div className="chart-card">
                                 {loading ? (
-                                    <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>Loading API telemetry logs...</div>
+                                    <p style={{ color: "var(--text-muted)" }}>Loading HTTP telemetry logs...</p>
                                 ) : logs.length === 0 ? (
-                                    <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>No API telemetry logs found matching your filters.</div>
+                                    <p style={{ color: "var(--text-muted)", padding: "20px 0" }}>No telemetry logs matching criteria.</p>
                                 ) : (
-                                    <table border="0" cellPadding="12" style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <table className="activity-table">
                                         <thead>
-                                            <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb", textAlign: "left", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
-                                                <th>Timestamp</th><th>Method</th><th>Endpoint</th><th>Status Code</th><th>Response Time</th><th>Size</th><th>Details</th>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>Method</th>
+                                                <th>Endpoint</th>
+                                                <th>Status</th>
+                                                <th>Response Time</th>
+                                                <th>Client IP</th>
+                                                <th>Details</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {logs.map((log) => (
-                                                <>
-                                                    <tr key={log.id} style={{ borderBottom: "1px solid #f3f4f6", fontSize: "14px" }}>
-                                                        <td>{new Date(log.timestamp).toLocaleString()}</td>
-                                                        <td>
-                                                            <span style={{ padding: "3px 8px", borderRadius: "4px", fontWeight: "bold", fontSize: "11px", ...getMethodBadgeStyle(log.method) }}>
-                                                                {log.method}
-                                                            </span>
-                                                        </td>
-                                                        <td style={{ fontFamily: "monospace", color: "#2563eb", fontWeight: "600" }}>{log.endpoint}</td>
-                                                        <td>
-                                                            <span style={{ padding: "3px 8px", borderRadius: "12px", fontWeight: "bold", fontSize: "11px", ...getStatusBadgeStyle(log.status_code) }}>
-                                                                {log.status_code}
-                                                            </span>
-                                                        </td>
-                                                        <td style={{ fontWeight: "bold", color: getLatencyColor(log.response_time) }}>{log.response_time} ms</td>
-                                                        <td>{log.response_size ? `${log.response_size} B` : "N/A"}</td>
-                                                        <td>
-                                                            <button onClick={() => setExpandedLogId(expandedLogId === log.id ? null : log.id)} style={btnActionStyle}>
-                                                                {expandedLogId === log.id ? "Hide" : "Inspect"}
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    {expandedLogId === log.id && (
-                                                        <tr style={{ backgroundColor: "#f8fafc" }}>
-                                                            <td colSpan="7" style={{ padding: "16px", borderBottom: "1px solid #e2e8f0" }}>
-                                                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "15px", fontSize: "13px" }}>
-                                                                    <div><strong>Log ID:</strong> #{log.id}</div>
-                                                                    <div><strong>IP Address:</strong> {log.ip_address || "127.0.0.1 (Localhost)"}</div>
-                                                                    <div><strong>User ID:</strong> {log.user_id ? `#${log.user_id}` : "Anonymous"}</div>
-                                                                    <div><strong>User Agent:</strong> {log.user_agent || "FastAPI Telemetry Client"}</div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    )}
-                                                </>
+                                                <tr key={log.id}>
+                                                    <td>{new Date(log.timestamp).toLocaleString()}</td>
+                                                    <td>
+                                                        <span style={{ fontWeight: "bold", padding: "3px 8px", borderRadius: "14px", fontSize: "11px", backgroundColor: log.method === "GET" ? "rgba(16,185,129,0.2)" : log.method === "POST" ? "rgba(99,102,241,0.2)" : "rgba(245,158,11,0.2)", color: log.method === "GET" ? "#10b981" : log.method === "POST" ? "#818cf8" : "#f59e0b" }}>
+                                                            {log.method}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ fontWeight: "bold", color: "var(--text-heading)" }}>{log.endpoint}</td>
+                                                    <td>
+                                                        <span style={{ fontWeight: "bold", color: getStatusColor(log.status_code) }}>
+                                                            {log.status_code}
+                                                        </span>
+                                                    </td>
+                                                    <td>{log.response_time} ms</td>
+                                                    <td>{log.client_ip || "127.0.0.1"}</td>
+                                                    <td>
+                                                        <button onClick={() => setSelectedLog(log)} style={btnActionStyle}>
+                                                            <FaInfoCircle /> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             ))}
                                         </tbody>
                                     </table>
                                 )}
 
-                                {/* Pagination */}
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px", backgroundColor: "#f9fafb", borderTop: "1px solid #e5e7eb" }}>
-                                    <div style={{ fontSize: "13px", color: "#6b7280" }}>
-                                        Showing page {page} of {totalPages} ({totalItems} total logs)
-                                    </div>
-                                    <div style={{ display: "flex", gap: "8px" }}>
-                                        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} style={btnSecondaryStyle}>Previous</button>
-                                        <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} style={btnSecondaryStyle}>Next</button>
+                                {/* Pagination Footer */}
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid var(--border-card)" }}>
+                                    <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>
+                                        Showing page {page} of {totalPages} ({totalLogs} total logs)
+                                    </span>
+
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <button disabled={page <= 1} onClick={() => setPage(page - 1)} style={{ ...btnSecondaryStyle, opacity: page <= 1 ? 0.5 : 1 }}>
+                                            <FaArrowLeft style={{ marginRight: "4px" }} /> Previous
+                                        </button>
+                                        <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} style={{ ...btnSecondaryStyle, opacity: page >= totalPages ? 0.5 : 1 }}>
+                                            Next <FaArrowRight style={{ marginLeft: "4px" }} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -332,84 +360,44 @@ function LogExplorer({ darkMode, setDarkMode }) {
 
                     {/* TAB 2: Endpoint Analytics Leaderboard */}
                     {activeTab === "analytics" && (
-                        <div style={{ backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e5e7eb", padding: "20px" }}>
-                            <h3>Endpoint Telemetry Analytics Leaderboard</h3>
-                            <p style={{ color: "#6b7280", fontSize: "13px", marginBottom: "15px" }}>
-                                Comprehensive per-endpoint performance metrics, latency ranges, error rates, and throughput usage %.
-                            </p>
-
-                            <table border="0" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <div className="chart-card">
+                            <h3 style={{ margin: "0 0 16px 0", color: "var(--text-heading)" }}>🏆 Per-Endpoint Telemetry Analytics & Leaderboard</h3>
+                            <table className="activity-table">
                                 <thead>
-                                    <tr style={{ backgroundColor: "#f9fafb", textAlign: "left", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
-                                        <th>Endpoint Path</th><th>Total Requests</th><th>Avg Latency</th><th>Min Latency</th><th>Max Latency</th><th>Error %</th><th>Usage %</th>
+                                    <tr>
+                                        <th>Endpoint</th><th>Avg Latency</th><th>Min Latency</th><th>Max Latency</th><th>Error Rate</th><th>Daily Volume</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {endpointAnalytics.length === 0 ? (
-                                        <tr><td colSpan="7" style={{ textAlign: "center" }}>No endpoint telemetry analytics available.</td></tr>
-                                    ) : (
-                                        endpointAnalytics.map((ep, idx) => (
-                                            <tr key={idx} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                                <td style={{ fontFamily: "monospace", fontWeight: "bold", color: "#2563eb" }}>{ep.endpoint}</td>
-                                                <td>{ep.total_requests}</td>
-                                                <td style={{ fontWeight: "bold", color: getLatencyColor(ep.avg_latency) }}>{ep.avg_latency} ms</td>
-                                                <td>{ep.min_latency} ms</td>
-                                                <td>{ep.max_latency} ms</td>
-                                                <td style={{ fontWeight: "bold", color: ep.error_percentage > 5 ? "#dc2626" : "#16a34a" }}>{ep.error_percentage}%</td>
-                                                <td>{ep.usage_percentage}%</td>
-                                            </tr>
-                                        ))
-                                    )}
+                                    {analytics.map((item, idx) => (
+                                        <tr key={idx}>
+                                            <td style={{ fontWeight: "bold", color: "var(--text-heading)" }}>{item.endpoint}</td>
+                                            <td>{item.avg_latency} ms</td>
+                                            <td>{item.min_latency} ms</td>
+                                            <td>{item.max_latency} ms</td>
+                                            <td><span style={{ color: item.error_rate > 5 ? "#ef4444" : "#10b981", fontWeight: "bold" }}>{item.error_rate}%</span></td>
+                                            <td>{item.daily_requests} reqs</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
                     )}
 
-                    {/* TAB 3: Charts & Trends */}
-                    {activeTab === "charts" && (
-                        <div style={{ backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e5e7eb", padding: "20px" }}>
-                            <h3>Hourly Requests & Latency Trends</h3>
-                            <p style={{ color: "#6b7280", fontSize: "13px", marginBottom: "20px" }}>
-                                Time-series distribution of incoming request throughput and server response latency.
-                            </p>
-
-                            {chartsData && chartsData.timeline.length > 0 ? (
-                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
-                                    {chartsData.timeline.map((item, idx) => (
-                                        <div key={idx} style={{ border: "1px solid #e5e7eb", padding: "12px", borderRadius: "6px" }}>
-                                            <div style={{ fontWeight: "bold", color: "#374151" }}>{item.hour}</div>
-                                            <div style={{ fontSize: "14px", marginTop: "4px" }}>Requests: <strong>{item.requests}</strong></div>
-                                            <div style={{ fontSize: "14px", color: getLatencyColor(item.avg_latency) }}>Avg Latency: <strong>{item.avg_latency} ms</strong></div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p style={{ color: "#6b7280" }}>No chart telemetry data available yet for the selected time window.</p>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Ingest Test Log Modal */}
-                    {showIngestModal && (
+                    {/* Details Modal */}
+                    {selectedLog && (
                         <div style={modalOverlayStyle}>
                             <div style={modalContentStyle}>
-                                <h3>Ingest Custom Telemetry Log</h3>
-                                <p style={{ color: "#6b7280", fontSize: "13px", marginBottom: "15px" }}>
-                                    Simulate API telemetry payload received from an external gateway.
-                                </p>
-                                <form onSubmit={handleIngestSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                                    <input placeholder="Endpoint" value={ingestForm.endpoint} required onChange={(e) => setIngestForm({ ...ingestForm, endpoint: e.target.value })} style={inputStyle} />
-                                    <select value={ingestForm.method} onChange={(e) => setIngestForm({ ...ingestForm, method: e.target.value })} style={selectStyle}>
-                                        <option value="GET">GET</option><option value="POST">POST</option><option value="PUT">PUT</option><option value="DELETE">DELETE</option>
-                                    </select>
-                                    <input type="number" placeholder="Status Code" value={ingestForm.status_code} required onChange={(e) => setIngestForm({ ...ingestForm, status_code: parseInt(e.target.value) })} style={inputStyle} />
-                                    <input type="number" step="0.1" placeholder="Response Time (ms)" value={ingestForm.response_time} required onChange={(e) => setIngestForm({ ...ingestForm, response_time: parseFloat(e.target.value) })} style={inputStyle} />
-                                    <input type="number" placeholder="Payload Size (bytes)" value={ingestForm.response_size} onChange={(e) => setIngestForm({ ...ingestForm, response_size: parseInt(e.target.value) })} style={inputStyle} />
-                                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
-                                        <button type="button" onClick={() => setShowIngestModal(false)} style={btnSecondaryStyle}>Cancel</button>
-                                        <button type="submit" style={btnPrimaryStyle}>Ingest Log</button>
-                                    </div>
-                                </form>
+                                <h3 style={{ margin: "0 0 16px 0", color: "var(--text-heading)" }}>HTTP Telemetry Trace Details</h3>
+                                <p><strong>Endpoint:</strong> {selectedLog.endpoint}</p>
+                                <p><strong>Method:</strong> {selectedLog.method}</p>
+                                <p><strong>Status Code:</strong> {selectedLog.status_code}</p>
+                                <p><strong>Response Time:</strong> {selectedLog.response_time} ms</p>
+                                <p><strong>Timestamp:</strong> {new Date(selectedLog.timestamp).toLocaleString()}</p>
+                                <p><strong>User Agent:</strong> {selectedLog.user_agent || "FastAPI Telemetry Agent"}</p>
+                                <div style={{ marginTop: "20px", textAlign: "right" }}>
+                                    <button onClick={() => setSelectedLog(null)} style={btnPrimaryStyle}>Close</button>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -419,17 +407,17 @@ function LogExplorer({ darkMode, setDarkMode }) {
     );
 }
 
-const cardStyle = { backgroundColor: "#ffffff", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" };
-const cardTitleStyle = { fontSize: "12px", color: "#6b7280", textTransform: "uppercase", fontWeight: "bold", display: "flex", alignItems: "center" };
-const cardValueStyle = { fontSize: "24px", fontWeight: "bold", marginTop: "6px" };
-const inputStyle = { padding: "8px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px" };
-const selectStyle = { padding: "8px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", backgroundColor: "#fff" };
-const btnPrimaryStyle = { padding: "8px 14px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "13px", display: "inline-flex", alignItems: "center" };
-const btnSecondaryStyle = { padding: "8px 14px", backgroundColor: "#6b7280", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "13px", display: "inline-flex", alignItems: "center" };
-const btnDangerStyle = { padding: "8px 14px", backgroundColor: "#dc2626", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "13px", display: "inline-flex", alignItems: "center" };
-const btnActionStyle = { padding: "4px 8px", backgroundColor: "#f3f4f6", border: "1px solid #d1d5db", borderRadius: "4px", cursor: "pointer", fontSize: "12px" };
-const tabBtnStyle = { padding: "8px 16px", backgroundColor: "transparent", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "14px", display: "inline-flex", alignItems: "center" };
-const modalOverlayStyle = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 };
-const modalContentStyle = { backgroundColor: "#ffffff", padding: "24px", borderRadius: "8px", width: "420px", maxWidth: "90%", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" };
+const cardStyle = { backgroundColor: "var(--bg-card)", padding: "18px", borderRadius: "16px", border: "1px solid var(--border-card)", boxShadow: "var(--shadow-card)", backdropFilter: "blur(16px)" };
+const cardTitleStyle = { fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold", display: "flex", alignItems: "center" };
+const cardValueStyle = { fontSize: "26px", fontWeight: "800", marginTop: "6px", color: "var(--text-main)" };
+const inputStyle = { padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--border-card)", backgroundColor: "var(--bg-search)", color: "var(--text-main)", fontSize: "14px" };
+const selectStyle = { padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--border-card)", fontSize: "14px", backgroundColor: "var(--bg-search)", color: "var(--text-main)" };
+const btnPrimaryStyle = { padding: "10px 18px", backgroundColor: "#7c3aed", color: "#fff", border: "none", borderRadius: "30px", cursor: "pointer", fontWeight: "bold", fontSize: "13px", display: "inline-flex", alignItems: "center", boxShadow: "0 6px 20px rgba(124,58,237,0.3)" };
+const btnSecondaryStyle = { padding: "8px 16px", backgroundColor: "var(--text-muted)", color: "#fff", border: "none", borderRadius: "20px", cursor: "pointer", fontSize: "13px", fontWeight: "bold", display: "inline-flex", alignItems: "center" };
+const btnDangerStyle = { padding: "10px 18px", backgroundColor: "#ef4444", color: "#fff", border: "none", borderRadius: "30px", cursor: "pointer", fontWeight: "bold", fontSize: "13px", display: "inline-flex", alignItems: "center", boxShadow: "0 6px 20px rgba(239,68,68,0.3)" };
+const btnActionStyle = { padding: "5px 10px", backgroundColor: "var(--bg-search)", border: "1px solid var(--border-card)", color: "var(--text-main)", borderRadius: "14px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" };
+const tabBtnStyle = { padding: "10px 18px", backgroundColor: "transparent", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "14px", display: "inline-flex", alignItems: "center" };
+const modalOverlayStyle = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, backdropFilter: "blur(8px)" };
+const modalContentStyle = { backgroundColor: "var(--bg-card)", padding: "28px", borderRadius: "20px", width: "450px", maxWidth: "90%", boxShadow: "var(--shadow-hover)", border: "1px solid var(--border-card)", color: "var(--text-main)" };
 
 export default LogExplorer;

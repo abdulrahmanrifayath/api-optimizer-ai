@@ -7,71 +7,79 @@ import {
     updateConnectedApi,
     deleteConnectedApi,
     updateApiStatus,
-    testApiConnection,
-    getApiMetrics,
     getConnectedApiSummary,
+    testApiConnection,
+    getHistoricalMetrics,
+    getErrorSummary
 } from "../services/connectedApiService";
-import { FaSearch, FaFilter, FaSortAmountDown, FaPlus, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaShieldAlt, FaSync } from "react-icons/fa";
+import {
+    FaServer,
+    FaCheckCircle,
+    FaExclamationTriangle,
+    FaTimesCircle,
+    FaTrash,
+    FaEdit,
+    FaSearch,
+    FaPlay,
+    FaChartLine,
+    FaLock,
+    FaHistory
+} from "react-icons/fa";
 import "../styles/dashboard.css";
 
 function ConnectedApis({ darkMode, setDarkMode }) {
     const [apis, setApis] = useState([]);
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalApis, setTotalApis] = useState(0);
 
-    // Search, Filter, Sort & Pagination state
+    // Toolbar filters
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
     const [sortBy, setSortBy] = useState("newest");
-    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
 
-    // Toast notification state
-    const [toastMessage, setToastMessage] = useState(null);
-
-    // Form state
-    const [form, setForm] = useState({
-        name: "",
-        base_url: "",
-        description: "",
-    });
-
+    // Add / Edit Form State
+    const [form, setForm] = useState({ name: "", base_url: "", description: "" });
     const [editingId, setEditingId] = useState(null);
+
+    // Testing & Telemetry modal state
     const [testingId, setTestingId] = useState(null);
     const [testResults, setTestResults] = useState({});
     const [selectedMetricsApi, setSelectedMetricsApi] = useState(null);
-    const [metricsList, setMetricsList] = useState([]);
+    const [historicalMetrics, setHistoricalMetrics] = useState([]);
+    const [timeframe, setTimeframe] = useState("24h");
     const [loadingMetrics, setLoadingMetrics] = useState(false);
 
-    const showToast = (message, type = "success") => {
-        setToastMessage({ message, type });
-        setTimeout(() => setToastMessage(null), 3500);
+    // Toast Alert State
+    const [toastMessage, setToastMessage] = useState(null);
+
+    const showToast = (msg, type = "success") => {
+        setToastMessage({ message: msg, type });
+        setTimeout(() => setToastMessage(null), 4000);
     };
 
-    // Load APIs & Summary
     const loadData = async () => {
         setLoading(true);
         try {
-            const [apisData, summaryData] = await Promise.all([
-                getConnectedApis({
-                    query: searchQuery,
-                    status: statusFilter,
-                    sort_by: sortBy,
-                    page: page,
-                    limit: limit,
-                }),
-                getConnectedApiSummary(),
-            ]);
+            const data = await getConnectedApis({
+                query: searchQuery,
+                status: statusFilter,
+                sort_by: sortBy,
+                page,
+                limit,
+            });
+            setApis(data.items || []);
+            setTotalPages(data.total_pages || 1);
+            setTotalApis(data.total_items || 0);
 
-            setApis(apisData.items || []);
-            setTotalPages(apisData.total_pages || 1);
-            setTotalItems(apisData.total || 0);
-            setSummary(summaryData);
+            const sumData = await getConnectedApiSummary();
+            setSummary(sumData);
         } catch (err) {
-            console.error("Failed to load APIs or summary:", err);
-            showToast("Failed to load connected APIs", "error");
+            console.error("Failed to load connected APIs:", err);
+            showToast("Failed to fetch connected APIs data", "error");
         } finally {
             setLoading(false);
         }
@@ -79,7 +87,7 @@ function ConnectedApis({ darkMode, setDarkMode }) {
 
     useEffect(() => {
         loadData();
-    }, [page, limit, statusFilter, sortBy]);
+    }, [page, statusFilter, sortBy, limit]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -92,10 +100,10 @@ function ConnectedApis({ darkMode, setDarkMode }) {
         try {
             if (editingId) {
                 await updateConnectedApi(editingId, form);
-                showToast("Connected API updated successfully!");
+                showToast("Connected API updated successfully");
             } else {
                 await createConnectedApi(form);
-                showToast("New API connected successfully!");
+                showToast("New REST API connected successfully");
             }
             setForm({ name: "", base_url: "", description: "" });
             setEditingId(null);
@@ -158,47 +166,50 @@ function ConnectedApis({ darkMode, setDarkMode }) {
         setSelectedMetricsApi(api);
         setLoadingMetrics(true);
         try {
-            const data = await getApiMetrics(api.id);
-            setMetricsList(data);
+            const data = await getHistoricalMetrics(api.id, timeframe);
+            setHistoricalMetrics(data || []);
         } catch (err) {
-            showToast("Failed to load metrics history", "error");
+            showToast("Failed to fetch historical metrics", "error");
         } finally {
             setLoadingMetrics(false);
         }
     };
 
-    const getStatusBadge = (statusStr) => {
-        switch (statusStr) {
+    const getStatusBadge = (status) => {
+        switch (status) {
             case "Healthy":
-            case "Active":
-                return <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#dcfce7", color: "#15803d" }}>🟢 Healthy</span>;
+                return <span className="status success">🟢 Healthy</span>;
             case "Slow":
-                return <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#fef3c7", color: "#b45309" }}>🟡 Slow</span>;
-            case "Inactive":
-                return <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#e5e7eb", color: "#4b5563" }}>⚪ Inactive</span>;
+                return <span style={{ padding: "4px 12px", borderRadius: "30px", fontSize: "12px", fontWeight: "bold", backgroundColor: "rgba(245, 158, 11, 0.2)", color: "#f59e0b" }}>🟡 Slow</span>;
+            case "Offline":
+                return <span style={{ padding: "4px 12px", borderRadius: "30px", fontSize: "12px", fontWeight: "bold", backgroundColor: "rgba(239, 68, 68, 0.2)", color: "#ef4444" }}>🔴 Offline</span>;
+            case "Unauthorized":
+                return <span style={{ padding: "4px 12px", borderRadius: "30px", fontSize: "12px", fontWeight: "bold", backgroundColor: "rgba(168, 85, 247, 0.2)", color: "#c084fc" }}>🔒 Unauthorized</span>;
             default:
-                return <span style={{ padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", backgroundColor: "#fee2e2", color: "#b91c1c" }}>🔴 {statusStr || "Offline"}</span>;
+                return <span style={{ padding: "4px 12px", borderRadius: "30px", fontSize: "12px", fontWeight: "bold", backgroundColor: "rgba(100, 116, 139, 0.2)", color: "var(--text-muted)" }}>⚪ {status || "Unknown"}</span>;
         }
     };
 
     return (
         <div className={`dashboard ${darkMode ? "dark" : ""}`}>
             <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+
             <div className="dashboard-body">
                 <Sidebar />
+
                 <main className="content">
-                    {/* Toast Notification Message */}
+                    {/* Toast Notification Alert */}
                     {toastMessage && (
                         <div
                             style={{
                                 position: "fixed",
-                                top: "20px",
+                                top: "80px",
                                 right: "20px",
                                 padding: "12px 20px",
-                                borderRadius: "8px",
-                                color: "#fff",
-                                backgroundColor: toastMessage.type === "error" ? "#dc2626" : "#16a34a",
-                                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                                borderRadius: "12px",
+                                color: "#ffffff",
+                                backgroundColor: toastMessage.type === "error" ? "#ef4444" : "#10b981",
+                                boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
                                 zIndex: 2000,
                                 fontWeight: "bold",
                                 fontSize: "14px",
@@ -208,10 +219,10 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                         </div>
                     )}
 
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                         <div>
-                            <h1>Connected API Management</h1>
-                            <p style={{ color: "#6b7280", margin: "4px 0 0 0" }}>
+                            <h1 style={{ color: "var(--text-heading)" }}><FaServer style={{ color: "#a855f7", marginRight: "10px" }} /> Connected API Management</h1>
+                            <p style={{ color: "var(--text-muted)", margin: "4px 0 0 0" }}>
                                 Connect, monitor latency, test DNS/SSL, and track real-time health telemetry.
                             </p>
                         </div>
@@ -219,22 +230,22 @@ function ConnectedApis({ darkMode, setDarkMode }) {
 
                     {/* Summary Cards */}
                     {summary && (
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "15px", marginBottom: "25px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "28px" }}>
                             <div style={cardStyle}>
                                 <div style={cardTitleStyle}>Total APIs</div>
                                 <div style={cardValueStyle}>{summary.total_connected_apis}</div>
                             </div>
                             <div style={cardStyle}>
-                                <div style={cardTitleStyle}><FaCheckCircle style={{ color: "#16a34a", marginRight: "4px" }} /> Healthy</div>
-                                <div style={{ ...cardValueStyle, color: "#16a34a" }}>{summary.healthy_apis}</div>
+                                <div style={cardTitleStyle}><FaCheckCircle style={{ color: "#10b981", marginRight: "4px" }} /> Healthy</div>
+                                <div style={{ ...cardValueStyle, color: "#10b981" }}>{summary.healthy_apis}</div>
                             </div>
                             <div style={cardStyle}>
-                                <div style={cardTitleStyle}><FaExclamationTriangle style={{ color: "#d97706", marginRight: "4px" }} /> Slow</div>
-                                <div style={{ ...cardValueStyle, color: "#d97706" }}>{summary.slow_apis}</div>
+                                <div style={cardTitleStyle}><FaExclamationTriangle style={{ color: "#f59e0b", marginRight: "4px" }} /> Slow</div>
+                                <div style={{ ...cardValueStyle, color: "#f59e0b" }}>{summary.slow_apis}</div>
                             </div>
                             <div style={cardStyle}>
-                                <div style={cardTitleStyle}><FaTimesCircle style={{ color: "#dc2626", marginRight: "4px" }} /> Offline</div>
-                                <div style={{ ...cardValueStyle, color: "#dc2626" }}>{summary.offline_apis}</div>
+                                <div style={cardTitleStyle}><FaTimesCircle style={{ color: "#ef4444", marginRight: "4px" }} /> Offline</div>
+                                <div style={{ ...cardValueStyle, color: "#ef4444" }}>{summary.offline_apis}</div>
                             </div>
                             <div style={cardStyle}>
                                 <div style={cardTitleStyle}>Avg Response</div>
@@ -244,9 +255,9 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                     )}
 
                     {/* Add / Edit Form */}
-                    <form onSubmit={handleSubmit} style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
-                        <h3>{editingId ? "Edit Connected API" : "Connect New REST API"}</h3>
-                        <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", marginTop: "12px" }}>
+                    <form onSubmit={handleSubmit} className="chart-card" style={{ marginBottom: "28px" }}>
+                        <h3 style={{ margin: 0, color: "var(--text-heading)" }}>{editingId ? "Edit Connected API" : "Connect New REST API"}</h3>
+                        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginTop: "16px" }}>
                             <input
                                 placeholder="API Name (e.g. Stripe Payment API)"
                                 value={form.name}
@@ -280,16 +291,16 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                     </form>
 
                     {/* Toolbar: Search, Filter, Sort */}
-                    <div style={{ backgroundColor: "#ffffff", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "20px" }}>
-                        <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                    <div className="chart-card" style={{ padding: "18px 24px", marginBottom: "24px" }}>
+                        <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "14px", flexWrap: "wrap", alignItems: "center" }}>
                             <div style={{ position: "relative", flex: "1 1 220px" }}>
                                 <input
                                     placeholder="Search API name or URL..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    style={{ ...inputStyle, width: "100%", paddingLeft: "32px" }}
+                                    style={{ ...inputStyle, width: "100%", paddingLeft: "36px" }}
                                 />
-                                <FaSearch style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
+                                <FaSearch style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
                             </div>
 
                             <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} style={selectStyle}>
@@ -298,16 +309,13 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                                 <option value="Slow">Slow</option>
                                 <option value="Offline">Offline</option>
                                 <option value="Unauthorized">Unauthorized</option>
-                                <option value="Timeout">Timeout</option>
-                                <option value="SSL Error">SSL Error</option>
-                                <option value="Inactive">Inactive</option>
                             </select>
 
-                            <select value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }} style={selectStyle}>
+                            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={selectStyle}>
                                 <option value="newest">Sort: Newest</option>
                                 <option value="oldest">Sort: Oldest</option>
-                                <option value="fastest">Sort: Fastest</option>
-                                <option value="slowest">Sort: Slowest</option>
+                                <option value="fastest">Sort: Fastest Latency</option>
+                                <option value="slowest">Sort: Slowest Latency</option>
                             </select>
 
                             <select value={limit} onChange={(e) => { setLimit(parseInt(e.target.value)); setPage(1); }} style={selectStyle}>
@@ -316,24 +324,20 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                                 <option value={50}>50 per page</option>
                             </select>
 
-                            <button type="submit" style={btnPrimaryStyle}>
-                                Filter
-                            </button>
+                            <button type="submit" style={btnPrimaryStyle}>Filter</button>
                         </form>
                     </div>
 
                     {/* APIs Table */}
-                    <div style={{ backgroundColor: "#ffffff", borderRadius: "8px", border: "1px solid #e5e7eb", overflow: "hidden" }}>
+                    <div className="chart-card">
                         {loading ? (
-                            <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>Loading connected APIs...</div>
+                            <p style={{ color: "var(--text-muted)" }}>Loading connected APIs...</p>
                         ) : apis.length === 0 ? (
-                            <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-                                No connected APIs found matching your criteria. Add one above!
-                            </div>
+                            <p style={{ color: "var(--text-muted)", padding: "20px 0" }}>No connected APIs found.</p>
                         ) : (
-                            <table border="0" cellPadding="12" style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <table className="activity-table">
                                 <thead>
-                                    <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb", textAlign: "left", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
+                                    <tr>
                                         <th>Name & Base URL</th>
                                         <th>Health Status</th>
                                         <th>Latency</th>
@@ -345,50 +349,52 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                                 </thead>
                                 <tbody>
                                     {apis.map((api) => {
-                                        const result = testResults[api.id];
+                                        const testRes = testResults[api.id];
                                         return (
-                                            <tr key={api.id} style={{ borderBottom: "1px solid #f3f4f6", fontSize: "14px" }}>
+                                            <tr key={api.id}>
                                                 <td>
-                                                    <strong>{api.name}</strong>
-                                                    <br />
-                                                    <a href={api.base_url} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#2563eb" }}>
-                                                        {api.base_url}
-                                                    </a>
+                                                    <div style={{ fontWeight: "bold", color: "var(--text-heading)" }}>{api.name}</div>
+                                                    <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>{api.base_url}</div>
                                                 </td>
                                                 <td>{getStatusBadge(api.status)}</td>
-                                                <td style={{ fontWeight: "bold", color: api.latency < 200 ? "#16a34a" : api.latency < 500 ? "#d97706" : "#dc2626" }}>
-                                                    {api.latency ? `${api.latency} ms` : "N/A"}
-                                                </td>
-                                                <td style={{ fontWeight: "bold", color: api.availability >= 98 ? "#16a34a" : "#dc2626" }}>
-                                                    {api.availability}%
-                                                </td>
+                                                <td>{api.latency ? `${api.latency} ms` : "N/A"}</td>
+                                                <td>{api.availability ? `${api.availability}%` : "100%"}</td>
                                                 <td>
-                                                    <FaShieldAlt style={{ color: api.ssl_verified ? "#16a34a" : "#dc2626", marginRight: "4px" }} />
-                                                    <span style={{ fontSize: "12px" }}>{api.ssl_verified ? "Valid" : "Error"}</span>
-                                                </td>
-                                                <td>
-                                                    {testingId === api.id ? (
-                                                        <span style={{ color: "#2563eb", fontSize: "12px" }}>Testing...</span>
-                                                    ) : result ? (
-                                                        result.status === "Healthy" || result.status === "Slow" ? (
-                                                            <span style={{ color: "#16a34a", fontSize: "12px" }}>✅ {result.status} ({result.response_time}ms)</span>
-                                                        ) : (
-                                                            <span style={{ color: "#dc2626", fontSize: "12px" }}>❌ {result.status}</span>
-                                                        )
+                                                    {api.ssl_verified ? (
+                                                        <span style={{ color: "#10b981", fontSize: "12px", fontWeight: "bold" }}>Valid</span>
                                                     ) : (
-                                                        <span style={{ color: "#9ca3af", fontSize: "12px" }}>Not tested</span>
+                                                        <span style={{ color: "#ef4444", fontSize: "12px", fontWeight: "bold" }}>Invalid / Disabled</span>
                                                     )}
                                                 </td>
                                                 <td>
-                                                    <button onClick={() => handleTestConnection(api.id)} disabled={testingId === api.id} style={{ ...btnActionStyle, backgroundColor: "#dbeafe", color: "#1e40af" }}>
-                                                        <FaSync style={{ marginRight: "4px" }} /> Test
-                                                    </button>{" "}
-                                                    <button onClick={() => handleToggleStatus(api)} style={{ ...btnActionStyle, backgroundColor: api.status === "Inactive" ? "#dcfce7" : "#fef3c7", color: api.status === "Inactive" ? "#166534" : "#92400e" }}>
-                                                        {api.status === "Inactive" ? "Enable" : "Disable"}
-                                                    </button>{" "}
-                                                    <button onClick={() => handleViewMetrics(api)} style={{ ...btnActionStyle, backgroundColor: "#f3e8ff", color: "#6b21a8" }}>Metrics</button>{" "}
-                                                    <button onClick={() => handleEdit(api)} style={{ ...btnActionStyle, backgroundColor: "#e5e7eb", color: "#374151" }}>Edit</button>{" "}
-                                                    <button onClick={() => handleDelete(api.id)} style={{ ...btnActionStyle, backgroundColor: "#fee2e2", color: "#991b1b" }}>Delete</button>
+                                                    {testingId === api.id ? (
+                                                        <span style={{ color: "#a855f7", fontWeight: "bold" }}>Testing...</span>
+                                                    ) : testRes ? (
+                                                        <span style={{ fontSize: "12px", color: testRes.status === "Healthy" ? "#10b981" : "#ef4444" }}>
+                                                            {testRes.status} ({testRes.response_time}ms)
+                                                        </span>
+                                                    ) : (
+                                                        <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Not tested</span>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: "flex", gap: "6px" }}>
+                                                        <button onClick={() => handleTestConnection(api.id)} style={{ ...btnActionStyle, backgroundColor: "#6366f1", color: "#fff" }} title="Test Connection">
+                                                            <FaPlay style={{ fontSize: "10px" }} /> Test
+                                                        </button>
+                                                        <button onClick={() => handleToggleStatus(api)} style={{ ...btnActionStyle, backgroundColor: "var(--text-muted)", color: "#fff" }} title="Toggle Monitoring">
+                                                            {api.status === "Inactive" ? "Enable" : "Disable"}
+                                                        </button>
+                                                        <button onClick={() => handleViewMetrics(api)} style={{ ...btnActionStyle, backgroundColor: "#38bdf8", color: "#fff" }} title="View Metrics">
+                                                            <FaHistory /> Metrics
+                                                        </button>
+                                                        <button onClick={() => handleEdit(api)} style={{ ...btnActionStyle, backgroundColor: "#f59e0b", color: "#fff" }} title="Edit API">
+                                                            <FaEdit />
+                                                        </button>
+                                                        <button onClick={() => handleDelete(api.id)} style={{ ...btnActionStyle, backgroundColor: "#ef4444", color: "#fff" }} title="Delete API">
+                                                            <FaTrash />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         );
@@ -398,58 +404,34 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                         )}
 
                         {/* Pagination Footer */}
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px", backgroundColor: "#f9fafb", borderTop: "1px solid #e5e7eb" }}>
-                            <div style={{ fontSize: "13px", color: "#6b7280" }}>
-                                Showing page {page} of {totalPages} ({totalItems} total APIs)
-                            </div>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} style={btnSecondaryStyle}>Previous</button>
-                                <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} style={btnSecondaryStyle}>Next</button>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "20px", paddingTop: "16px", borderTop: "1px solid var(--border-card)" }}>
+                            <span style={{ fontSize: "13px", color: "var(--text-muted)" }}>
+                                Showing page {page} of {totalPages} ({totalApis} total APIs)
+                            </span>
+
+                            <div style={{ display: "flex", gap: "10px" }}>
+                                <button disabled={page <= 1} onClick={() => setPage(page - 1)} style={{ ...btnSecondaryStyle, opacity: page <= 1 ? 0.5 : 1 }}>
+                                    Previous
+                                </button>
+                                <button disabled={page >= totalPages} onClick={() => setPage(page + 1)} style={{ ...btnSecondaryStyle, opacity: page >= totalPages ? 0.5 : 1 }}>
+                                    Next
+                                </button>
                             </div>
                         </div>
                     </div>
-
-                    {/* Metrics Drawer */}
-                    {selectedMetricsApi && (
-                        <div style={{ marginTop: "25px", padding: "20px", backgroundColor: "#fafafa", borderRadius: "8px", border: "1px solid #d1d5db" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <h3>Telemetry Metrics History for {selectedMetricsApi.name}</h3>
-                                <button onClick={() => setSelectedMetricsApi(null)} style={btnSecondaryStyle}>Close</button>
-                            </div>
-                            {loadingMetrics ? <p>Loading metrics...</p> : metricsList.length === 0 ? <p>No metric history recorded yet.</p> : (
-                                <table border="0" cellPadding="8" style={{ width: "100%", marginTop: "10px", borderCollapse: "collapse" }}>
-                                    <thead>
-                                        <tr style={{ backgroundColor: "#e5e7eb", textAlign: "left" }}>
-                                            <th>Timestamp</th><th>Status Code</th><th>Response Time (ms)</th><th>Payload Size</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {metricsList.map((m) => (
-                                            <tr key={m.id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                                                <td>{new Date(m.checked_at).toLocaleString()}</td>
-                                                <td><span style={{ fontWeight: "bold", color: m.status_code < 400 ? "#16a34a" : "#dc2626" }}>{m.status_code || "Failed"}</span></td>
-                                                <td>{m.response_time} ms</td>
-                                                <td>{m.response_size ? `${m.response_size} B` : "N/A"}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
-                    )}
                 </main>
             </div>
         </div>
     );
 }
 
-const cardStyle = { backgroundColor: "#ffffff", padding: "16px", borderRadius: "8px", border: "1px solid #e5e7eb", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" };
-const cardTitleStyle = { fontSize: "12px", color: "#6b7280", textTransform: "uppercase", fontWeight: "bold", display: "flex", alignItems: "center" };
-const cardValueStyle = { fontSize: "24px", fontWeight: "bold", marginTop: "6px" };
-const inputStyle = { padding: "8px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", flex: "1 1 200px" };
-const selectStyle = { padding: "8px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", backgroundColor: "#fff" };
-const btnPrimaryStyle = { padding: "8px 16px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "14px" };
-const btnSecondaryStyle = { padding: "8px 16px", backgroundColor: "#6b7280", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "14px" };
-const btnActionStyle = { padding: "4px 8px", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "12px", fontWeight: "bold" };
+const cardStyle = { backgroundColor: "var(--bg-card)", padding: "18px", borderRadius: "16px", border: "1px solid var(--border-card)", boxShadow: "var(--shadow-card)", backdropFilter: "blur(16px)" };
+const cardTitleStyle = { fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold", display: "flex", alignItems: "center" };
+const cardValueStyle = { fontSize: "26px", fontWeight: "800", marginTop: "6px", color: "var(--text-main)" };
+const inputStyle = { padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--border-card)", backgroundColor: "var(--bg-search)", color: "var(--text-main)", fontSize: "14px", flex: "1 1 200px" };
+const selectStyle = { padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--border-card)", fontSize: "14px", backgroundColor: "var(--bg-search)", color: "var(--text-main)" };
+const btnPrimaryStyle = { padding: "10px 20px", backgroundColor: "#7c3aed", color: "#fff", border: "none", borderRadius: "30px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", boxShadow: "0 6px 20px rgba(124,58,237,0.3)" };
+const btnSecondaryStyle = { padding: "8px 16px", backgroundColor: "var(--text-muted)", color: "#fff", border: "none", borderRadius: "20px", cursor: "pointer", fontSize: "13px", fontWeight: "bold" };
+const btnActionStyle = { padding: "5px 10px", border: "none", borderRadius: "14px", cursor: "pointer", fontSize: "11px", fontWeight: "bold" };
 
 export default ConnectedApis;
