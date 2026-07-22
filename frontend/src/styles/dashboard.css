@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 /* ============================================================
-   CANVA-STYLE UNIVERSAL THEME SYSTEM (DAY & NIGHT MODES)
+   CANVA-STYLE UNIVERSAL ADAPTIVE THEME SYSTEM (DAY & NIGHT)
 ============================================================ */
 
 :root {
@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-banner h1 {
-    color: #ffffff;
+    color: #ffffff !important;
 }
 
 /* Canva Action Grid */
@@ -398,4 +398,52 @@ h1, h2, h3, h4, h5, h6 {
 .success {
     background: #dcfce7;
     color: #15803d;
+}
+
+/* ============================================================
+   UNIVERSAL DARK MODE HIGH-CONTRAST TEXT & RECHARTS OVERRIDES
+============================================================ */
+
+.dashboard.dark h1,
+.dashboard.dark h2,
+.dashboard.dark h3,
+.dashboard.dark h4,
+.dashboard.dark h5,
+.dashboard.dark h6 {
+    color: var(--text-heading) !important;
+}
+
+.dashboard.dark p,
+.dashboard.dark span,
+.dashboard.dark label,
+.dashboard.dark td,
+.dashboard.dark th,
+.dashboard.dark li,
+.dashboard.dark div,
+.dashboard.dark strong {
+    color: var(--text-main);
+}
+
+.dashboard.dark .suggestion p,
+.dashboard.dark .recommendation p,
+.dashboard.dark .analysis-box p,
+.dashboard.dark .risk-details p,
+.dashboard.dark .prediction-box h3,
+.dashboard.dark .prediction-box h1,
+.dashboard.dark .prediction-box span {
+    color: var(--text-main) !important;
+}
+
+/* Recharts Dark Mode Text Overrides */
+.dashboard.dark .recharts-text,
+.dashboard.dark .recharts-cartesian-axis-tick-value,
+.dashboard.dark .recharts-legend-item-text {
+    fill: #f8fafc !important;
+    color: #f8fafc !important;
+}
+
+.dashboard.dark .recharts-default-tooltip {
+    background-color: #18181b !important;
+    border-color: #27272a !important;
+    color: #f8fafc !important;
 }

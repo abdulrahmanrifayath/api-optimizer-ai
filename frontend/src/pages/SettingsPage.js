@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../auth/AuthContext";
-import { FaCog, FaUser, FaKey, FaClock, FaDatabase, FaSave } from "react-icons/fa";
+import { FaCog, FaUser, FaClock, FaSave } from "react-icons/fa";
 import "../styles/dashboard.css";
 
 function SettingsPage({ darkMode, setDarkMode }) {
@@ -38,30 +38,30 @@ function SettingsPage({ darkMode, setDarkMode }) {
             <div className="dashboard-body">
                 <Sidebar />
                 <main className="content">
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                         <div>
-                            <h1><FaCog style={{ color: "#4b5563", marginRight: "8px" }} /> System Settings & Telemetry Config</h1>
-                            <p style={{ color: "#6b7280", margin: "4px 0 0 0" }}>
+                            <h1 style={{ color: "var(--text-heading)" }}><FaCog style={{ color: "#818cf8", marginRight: "10px" }} /> System Settings & Telemetry Config</h1>
+                            <p style={{ color: "var(--text-muted)", margin: "4px 0 0 0" }}>
                                 User account profile, JWT tokens, background scheduler interval, and database retention rules.
                             </p>
                         </div>
                     </div>
 
                     {savedNotice && (
-                        <div style={{ backgroundColor: "#dcfce7", color: "#166534", padding: "12px 20px", borderRadius: "6px", fontWeight: "bold", marginBottom: "20px" }}>
+                        <div style={{ backgroundColor: "rgba(16,185,129,0.15)", color: "#10b981", padding: "14px 20px", borderRadius: "12px", fontWeight: "bold", marginBottom: "24px", border: "1px solid #10b981" }}>
                             ✅ Settings updated successfully!
                         </div>
                     )}
 
                     <form onSubmit={handleSaveSettings}>
                         {/* Account Profile Settings */}
-                        <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
-                            <h3 style={{ margin: "0 0 15px 0", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px" }}>
-                                <FaUser style={{ color: "#2563eb" }} /> Account & Authentication Settings
+                        <div className="chart-card" style={{ marginBottom: "28px" }}>
+                            <h3 style={{ margin: "0 0 16px 0", color: "var(--text-heading)", display: "flex", alignItems: "center", gap: "10px" }}>
+                                <FaUser style={{ color: "#6366f1" }} /> Account & Authentication Settings
                             </h3>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>Full Name</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>Full Name</label>
                                     <input
                                         value={profile.name}
                                         onChange={(e) => setProfile({ ...profile, name: e.target.value })}
@@ -69,15 +69,15 @@ function SettingsPage({ darkMode, setDarkMode }) {
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>Email Address</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>Email Address</label>
                                     <input
                                         value={profile.email}
                                         disabled
-                                        style={{ ...inputStyle, backgroundColor: "#f3f4f6", color: "#6b7280" }}
+                                        style={{ ...inputStyle, opacity: 0.7 }}
                                     />
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>New Password</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>New Password</label>
                                     <input
                                         type="password"
                                         placeholder="Leave blank to keep current"
@@ -90,13 +90,13 @@ function SettingsPage({ darkMode, setDarkMode }) {
                         </div>
 
                         {/* Telemetry & Background Polling Settings */}
-                        <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
-                            <h3 style={{ margin: "0 0 15px 0", color: "#1e293b", display: "flex", alignItems: "center", gap: "8px" }}>
-                                <FaClock style={{ color: "#d97706" }} /> Telemetry Engine & Background Polling Config
+                        <div className="chart-card" style={{ marginBottom: "28px" }}>
+                            <h3 style={{ margin: "0 0 16px 0", color: "var(--text-heading)", display: "flex", alignItems: "center", gap: "10px" }}>
+                                <FaClock style={{ color: "#f59e0b" }} /> Telemetry Engine & Background Polling Config
                             </h3>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "15px" }}>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>APScheduler Polling Interval</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>APScheduler Polling Interval</label>
                                     <select
                                         value={config.pollIntervalMinutes}
                                         onChange={(e) => setConfig({ ...config, pollIntervalMinutes: parseInt(e.target.value) })}
@@ -108,7 +108,7 @@ function SettingsPage({ darkMode, setDarkMode }) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>Telemetry Log Retention Period</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>Telemetry Log Retention Period</label>
                                     <select
                                         value={config.logRetentionDays}
                                         onChange={(e) => setConfig({ ...config, logRetentionDays: parseInt(e.target.value) })}
@@ -120,7 +120,7 @@ function SettingsPage({ darkMode, setDarkMode }) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "4px" }}>CORS Allowed Origins</label>
+                                    <label style={{ fontSize: "13px", fontWeight: "bold", display: "block", marginBottom: "6px", color: "var(--text-main)" }}>CORS Allowed Origins</label>
                                     <input
                                         value={config.corsOrigins}
                                         onChange={(e) => setConfig({ ...config, corsOrigins: e.target.value })}
@@ -131,11 +131,11 @@ function SettingsPage({ darkMode, setDarkMode }) {
                         </div>
 
                         {/* Save & Logout */}
-                        <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                            <button type="submit" style={{ padding: "10px 20px", backgroundColor: "#2563eb", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", display: "inline-flex", alignItems: "center" }}>
-                                <FaSave style={{ marginRight: "6px" }} /> Save System Settings
+                        <div style={{ display: "flex", gap: "14px", justifyContent: "flex-end" }}>
+                            <button type="submit" style={{ padding: "12px 24px", backgroundColor: "#6366f1", color: "#fff", border: "none", borderRadius: "30px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", display: "inline-flex", alignItems: "center", boxShadow: "0 6px 20px rgba(99,102,241,0.3)" }}>
+                                <FaSave style={{ marginRight: "8px" }} /> Save System Settings
                             </button>
-                            <button type="button" onClick={logout} style={{ padding: "10px 20px", backgroundColor: "#dc2626", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "14px" }}>
+                            <button type="button" onClick={logout} style={{ padding: "12px 24px", backgroundColor: "#ef4444", color: "#fff", border: "none", borderRadius: "30px", cursor: "pointer", fontWeight: "bold", fontSize: "14px", boxShadow: "0 6px 20px rgba(239,68,68,0.3)" }}>
                                 Sign Out
                             </button>
                         </div>
@@ -146,6 +146,6 @@ function SettingsPage({ darkMode, setDarkMode }) {
     );
 }
 
-const inputStyle = { width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px" };
+const inputStyle = { width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--border-card)", backgroundColor: "var(--bg-search)", color: "var(--text-main)", fontSize: "14px" };
 
 export default SettingsPage;
