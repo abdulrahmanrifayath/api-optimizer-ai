@@ -21,11 +21,8 @@ import HealthTimeline from "../components/HealthTimeline";
 import AIRiskAnalyzer from "../components/AIRiskAnalyzer";
 import AIRecommendations from "../components/AIRecommendations";
 
-import {
-  getConnectedApiSummary,
-  getAiScoreCard,
-  getAiBusinessInsights
-} from "../services/connectedApiService";
+import { getConnectedApiSummary } from "../services/connectedApiService";
+import { getAiScoreCard, getAiBusinessInsights } from "../services/aiService";
 
 import API from "../services/api";
 
