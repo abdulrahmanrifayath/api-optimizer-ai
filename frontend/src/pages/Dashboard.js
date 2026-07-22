@@ -234,6 +234,8 @@ function Dashboard({
                 />
               </div>
             </div>
+          )}
+
           {/* =========================
               AI Score Card (Phase 6) & Business Insights (Phase 7)
           ========================== */}
