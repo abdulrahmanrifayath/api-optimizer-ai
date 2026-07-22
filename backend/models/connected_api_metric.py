@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -20,3 +20,7 @@ class ConnectedApiMetric(Base):
     checked_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
 
     connected_api = relationship("ConnectedAPI", back_populates="metrics")
+
+    __table_args__ = (
+        Index("idx_metrics_api_timestamp", "connected_api_id", "checked_at"),
+    )

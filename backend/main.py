@@ -24,6 +24,8 @@ from backend.routes.report_routes import router as report_router
 
 # Middleware
 from backend.middleware.api_logger import ApiLoggerMiddleware
+from backend.middleware.security_headers import SecurityHeadersMiddleware
+from backend.middleware.rate_limiter import RateLimiterMiddleware
 
 # AI Engine
 from backend.ai_engine.analyzer import fetch_logs
@@ -41,8 +43,10 @@ app = FastAPI(
 
 
 # ==========================================================
-# Middleware
+# Middleware Registration
 # ==========================================================
+app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimiterMiddleware)
 app.add_middleware(ApiLoggerMiddleware)
 
 
