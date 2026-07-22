@@ -68,7 +68,7 @@ function AIRecommendations() {
               border: "1px solid var(--border-card)",
               backgroundColor: "var(--table-row-bg)",
               display: "flex",
-              justify-content: "space-between",
+              justifyContent: "space-between",
               alignItems: "center",
               flexWrap: "wrap",
               gap: "12px",
