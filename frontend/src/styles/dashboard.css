@@ -1,72 +1,73 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 /* ============================================================
-   CANVA-STYLE UNIVERSAL ADAPTIVE THEME SYSTEM (DAY & NIGHT)
+   CYBER NEON VIOLET GLASSMORPHISM THEME SYSTEM (DAY & NIGHT)
 ============================================================ */
 
 :root {
-    /* Day / Light Mode Palette */
-    --bg-app: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-               radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.06) 0px, transparent 50%),
-               radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.06) 0px, transparent 50%),
+    /* Day Mode (Light Cyber Violet Glass) */
+    --bg-app: radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.12) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.09) 0px, transparent 50%),
+               radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.09) 0px, transparent 50%),
                #f8fafc;
-    --bg-card: rgba(255, 255, 255, 0.95);
-    --bg-card-hover: rgba(255, 255, 255, 1);
-    --bg-sidebar: #ffffff;
-    --bg-navbar: rgba(255, 255, 255, 0.95);
-    --bg-search: #f1f5f9;
-    --bg-hero: linear-gradient(135deg, #311b92 0%, #4a148c 45%, #880e4f 100%);
+    --bg-card: rgba(255, 255, 255, 0.88);
+    --bg-card-hover: rgba(255, 255, 255, 0.98);
+    --bg-sidebar: rgba(255, 255, 255, 0.92);
+    --bg-navbar: rgba(255, 255, 255, 0.9);
+    --bg-search: rgba(241, 245, 249, 0.9);
+    --bg-hero: linear-gradient(135deg, #4c1d95 0%, #6b21a8 50%, #9d174d 100%);
     
-    --border-card: rgba(226, 232, 240, 0.9);
-    --border-card-hover: #a855f7;
-    --border-sidebar: #e2e8f0;
+    --border-card: rgba(168, 85, 247, 0.22);
+    --border-card-hover: #c084fc;
+    --border-sidebar: rgba(226, 232, 240, 0.9);
 
     --text-main: #0f172a;
-    --text-heading: #1e1b4b;
+    --text-heading: #2e1065;
     --text-muted: #64748b;
     --text-link: #374151;
-    --text-active: #4f46e5;
-    --bg-active: #eef2ff;
+    --text-active: #7c3aed;
+    --bg-active: rgba(124, 58, 237, 0.1);
 
-    --shadow-card: 0 10px 30px -5px rgba(99, 102, 241, 0.08);
-    --shadow-hover: 0 20px 35px -8px rgba(124, 58, 237, 0.2);
+    --shadow-card: 0 10px 30px -5px rgba(124, 58, 237, 0.12);
+    --shadow-hover: 0 20px 40px -8px rgba(168, 85, 247, 0.28);
     
-    --table-header-bg: #f8fafc;
-    --table-row-bg: #ffffff;
-    --table-row-hover: #f1f5f9;
-    --table-border: #f1f5f9;
+    --table-header-bg: rgba(248, 250, 252, 0.8);
+    --table-row-bg: rgba(255, 255, 255, 0.9);
+    --table-row-hover: rgba(241, 245, 249, 0.95);
+    --table-border: rgba(226, 232, 240, 0.8);
 }
 
 .dashboard.dark {
-    /* Night / Dark Mode Palette */
-    --bg-app: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-               radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.12) 0px, transparent 50%),
-               #09090b;
-    --bg-card: rgba(18, 18, 26, 0.95);
-    --bg-card-hover: rgba(26, 26, 36, 1);
-    --bg-sidebar: #121217;
-    --bg-navbar: rgba(18, 18, 26, 0.95);
-    --bg-search: #1e1e28;
-    --bg-hero: linear-gradient(135deg, #18093c 0%, #2e0e56 50%, #4a0033 100%);
+    /* Night Mode (Cyber Dark Neon Violet Glass) */
+    --bg-app: radial-gradient(at 0% 0%, rgba(168, 85, 247, 0.28) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.22) 0px, transparent 50%),
+               radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.22) 0px, transparent 50%),
+               #080413;
+    --bg-card: rgba(19, 14, 38, 0.85);
+    --bg-card-hover: rgba(26, 19, 51, 0.95);
+    --bg-sidebar: rgba(14, 10, 28, 0.92);
+    --bg-navbar: rgba(14, 10, 28, 0.9);
+    --bg-search: rgba(30, 22, 58, 0.9);
+    --bg-hero: linear-gradient(135deg, #2e0854 0%, #4a0e78 50%, #700645 100%);
     
-    --border-card: rgba(255, 255, 255, 0.09);
-    --border-card-hover: #c084fc;
-    --border-sidebar: rgba(255, 255, 255, 0.08);
+    --border-card: rgba(192, 132, 252, 0.3);
+    --border-card-hover: #e879f9;
+    --border-sidebar: rgba(192, 132, 252, 0.2);
 
     --text-main: #f8fafc;
-    --text-heading: #f4f4f5;
-    --text-muted: #a1a1aa;
-    --text-link: #d4d4d8;
-    --text-active: #c084fc;
-    --bg-active: rgba(192, 132, 252, 0.15);
+    --text-heading: #faf5ff;
+    --text-muted: #cbd5e1;
+    --text-link: #e2e8f0;
+    --text-active: #e879f9;
+    --bg-active: rgba(232, 121, 249, 0.2);
 
-    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
-    --shadow-hover: 0 20px 40px rgba(192, 132, 252, 0.25);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(168, 85, 247, 0.15);
+    --shadow-hover: 0 20px 45px rgba(232, 121, 249, 0.35), 0 0 30px rgba(168, 85, 247, 0.3);
 
-    --table-header-bg: #18181b;
-    --table-row-bg: #141419;
-    --table-row-hover: #27272a;
-    --table-border: #27272a;
+    --table-header-bg: rgba(24, 17, 46, 0.9);
+    --table-row-bg: rgba(18, 13, 36, 0.9);
+    --table-row-hover: rgba(35, 25, 68, 0.95);
+    --table-border: rgba(192, 132, 252, 0.2);
 }
 
 * {
@@ -105,21 +106,22 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 1600px;
 }
 
-/* Navbar Adaptive Theme */
+/* Glassmorphism Navbar */
 .navbar {
-    height: 70px;
+    height: 72px;
     background: var(--bg-navbar);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid var(--border-sidebar);
+    padding: 0 32px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--border-card);
     position: sticky;
     top: 0;
     z-index: 100;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .navbar-search {
@@ -127,11 +129,11 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 10px;
     background: var(--bg-search);
-    padding: 10px 16px;
-    border-radius: 12px;
-    width: 340px;
-    border: 1px solid var(--border-sidebar);
-    transition: background 0.3s ease;
+    padding: 10px 18px;
+    border-radius: 30px;
+    width: 360px;
+    border: 1px solid var(--border-card);
+    transition: all 0.3s ease;
 }
 
 .navbar-search input {
@@ -157,100 +159,107 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-active);
 }
 
-/* Sidebar Adaptive Theme */
+/* Glassmorphism Sidebar */
 .sidebar {
-    width: 230px;
+    width: 240px;
     padding: 24px 18px;
     border-right: 1px solid var(--border-sidebar);
     background: var(--bg-sidebar);
-    min-height: calc(100vh - 70px);
-    transition: background 0.3s ease, border-color 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    min-height: calc(100vh - 72px);
+    transition: all 0.3s ease;
 }
 
 .sidebar-link {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 11px 16px;
-    border-radius: 10px;
+    padding: 12px 18px;
+    border-radius: 30px;
     color: var(--text-link);
     text-decoration: none;
     font-size: 14px;
-    transition: all 0.2s ease;
+    font-weight: 500;
+    transition: all 0.25s ease;
 }
 
 .sidebar-link:hover {
     background: var(--bg-active);
     color: var(--text-active);
+    transform: translateX(4px);
 }
 
 .sidebar-link.active {
     background: var(--bg-active);
     color: var(--text-active);
-    font-weight: 700;
+    font-weight: 800;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
 }
 
-/* Hero Banner */
+/* Cyber Neon Hero Banner */
 .hero-banner {
     background: var(--bg-hero);
-    border-radius: 24px;
-    padding: 32px 40px;
+    border-radius: 28px;
+    padding: 36px 44px;
     color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(124, 58, 237, 0.45);
     margin-bottom: 32px;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .hero-banner h1 {
     color: #ffffff !important;
 }
 
-/* Canva Action Grid */
+/* Neon Canva Action Grid */
 .canva-action-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    gap: 18px;
     margin-bottom: 32px;
 }
 
 .canva-action-card {
     background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 18px 22px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 20px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
     border: 1px solid var(--border-card);
     box-shadow: var(--shadow-card);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
 }
 
 .canva-action-card:hover {
-    transform: translateY(-6px) scale(1.02);
+    transform: translateY(-8px) scale(1.02);
     box-shadow: var(--shadow-hover);
     border-color: var(--border-card-hover);
 }
 
 .canva-action-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 52px;
+    height: 52px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(168, 85, 247, 0.35);
 }
 
-/* Metric Cards */
+/* Neon Metric Cards */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -260,20 +269,21 @@ h1, h2, h3, h4, h5, h6 {
 
 .metric-card {
     background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
     padding: 24px;
     display: flex;
     align-items: center;
     gap: 18px;
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-card);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     cursor: pointer;
 }
 
 .metric-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px);
     box-shadow: var(--shadow-hover);
     border-color: var(--border-card-hover);
 }
@@ -289,12 +299,12 @@ h1, h2, h3, h4, h5, h6 {
 
 .metric-card h2 {
     margin-top: 4px;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 800;
     color: var(--text-main);
 }
 
-/* Charts & Containers */
+/* Glassmorphic Chart & Analytics Containers */
 .charts-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -317,18 +327,20 @@ h1, h2, h3, h4, h5, h6 {
 .ai-panel,
 .notification-panel {
     background: var(--bg-card);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: 28px;
-    border-radius: 20px;
+    border-radius: 24px;
     box-shadow: var(--shadow-card);
     border: 1px solid var(--border-card);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .chart-card:hover,
 .activity-panel:hover,
 .leaderboard-card:hover {
     box-shadow: var(--shadow-hover);
+    border-color: var(--border-card-hover);
 }
 
 .chart-card h3,
@@ -343,7 +355,7 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
 }
 
-/* Table Themes */
+/* Glass Tables */
 .activity-table, .leaderboard-table {
     width: 100%;
     border-collapse: separate;
@@ -372,14 +384,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .activity-table td:first-child, .leaderboard-table td:first-child {
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
     border-left: 1px solid var(--table-border);
 }
 
 .activity-table td:last-child, .leaderboard-table td:last-child {
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
     border-right: 1px solid var(--table-border);
 }
 
@@ -387,8 +399,9 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--table-row-hover);
 }
 
+/* Status Badges */
 .status {
-    padding: 4px 12px;
+    padding: 4px 14px;
     border-radius: 30px;
     font-size: 12px;
     font-weight: 700;
@@ -396,13 +409,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .success {
-    background: #dcfce7;
-    color: #15803d;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
 }
 
 /* ============================================================
-   UNIVERSAL DARK MODE HIGH-CONTRAST TEXT & RECHARTS OVERRIDES
+   HIGH-CONTRAST NEON FONT VISIBILITY OVERRIDES
 ============================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-heading) !important;
+}
+
+p, span, label, td, th, li, div, strong {
+    color: var(--text-main);
+}
 
 .dashboard.dark h1,
 .dashboard.dark h2,
@@ -421,29 +442,19 @@ h1, h2, h3, h4, h5, h6 {
 .dashboard.dark li,
 .dashboard.dark div,
 .dashboard.dark strong {
-    color: var(--text-main);
-}
-
-.dashboard.dark .suggestion p,
-.dashboard.dark .recommendation p,
-.dashboard.dark .analysis-box p,
-.dashboard.dark .risk-details p,
-.dashboard.dark .prediction-box h3,
-.dashboard.dark .prediction-box h1,
-.dashboard.dark .prediction-box span {
     color: var(--text-main) !important;
 }
 
 /* Recharts Dark Mode Text Overrides */
-.dashboard.dark .recharts-text,
-.dashboard.dark .recharts-cartesian-axis-tick-value,
-.dashboard.dark .recharts-legend-item-text {
-    fill: #f8fafc !important;
-    color: #f8fafc !important;
+.recharts-text,
+.recharts-cartesian-axis-tick-value,
+.recharts-legend-item-text {
+    fill: var(--text-main) !important;
+    color: var(--text-main) !important;
 }
 
 .dashboard.dark .recharts-default-tooltip {
-    background-color: #18181b !important;
-    border-color: #27272a !important;
+    background-color: rgba(18, 13, 36, 0.95) !important;
+    border-color: rgba(192, 132, 252, 0.4) !important;
     color: #f8fafc !important;
 }

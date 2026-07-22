@@ -31,7 +31,6 @@ import {
   FaServer,
   FaClock,
   FaExclamationTriangle,
-  FaPlay,
   FaBriefcase,
   FaList,
   FaBrain,
@@ -52,9 +51,7 @@ function Dashboard({ darkMode, setDarkMode }) {
 
   const navigate = useNavigate();
 
-  // =========================
   // Fetch Dashboard Data
-  // =========================
   async function fetchDashboard() {
     try {
       const [res, summaryRes, scoreCardRes, businessRes] = await Promise.all([
@@ -112,12 +109,12 @@ function Dashboard({ darkMode, setDarkMode }) {
           height: "100vh",
           fontSize: "20px",
           fontWeight: "bold",
-          color: "#4f46e5",
+          color: "var(--text-active)",
           gap: "15px"
         }}
       >
-        <div>✨ Loading Canva-Style AI Optimizer Control Center...</div>
-        <div style={{ fontSize: "14px", color: "#6b7280" }}>Fetching live API telemetry & AI models...</div>
+        <div>✨ Loading Cyber Neon Glassmorphic Control Center...</div>
+        <div style={{ fontSize: "14px", color: "var(--text-muted)" }}>Fetching live API telemetry & AI models...</div>
       </div>
     );
   }
@@ -130,15 +127,15 @@ function Dashboard({ darkMode, setDarkMode }) {
         <Sidebar />
 
         <main className="content">
-          {/* Canva-Style Hero Banner */}
+          {/* Cyber Neon Hero Banner */}
           <div className="hero-banner">
             <div>
               <div className="live-indicator" style={{ marginBottom: "12px" }}>
                 <span className="pulse-dot"></span>
-                ✨ AI-POWERED TELEMETRY ENGINE • AUTO-REFRESH 5s
+                ✨ CYBER NEON VIOLET TELEMETRY • AUTO-REFRESH 5s
               </div>
-              <h1>Create, Monitor & Optimize APIs Like Magic ✨</h1>
-              <p>Real-time HTTP log ingestion, predictive ML traffic forecasting, and executive business reports.</p>
+              <h1 style={{ color: "#ffffff" }}>Create, Monitor & Optimize APIs Like Magic ✨</h1>
+              <p style={{ color: "#e9d5ff" }}>Real-time HTTP log ingestion, predictive ML traffic forecasting, and executive business reports.</p>
             </div>
 
             <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", zIndex: 1 }}>
@@ -147,7 +144,7 @@ function Dashboard({ darkMode, setDarkMode }) {
                 style={{
                   padding: "12px 20px",
                   backgroundColor: "#ffffff",
-                  color: "#4a148c",
+                  color: "#4c1d95",
                   border: "none",
                   borderRadius: "30px",
                   fontWeight: "bold",
@@ -156,8 +153,7 @@ function Dashboard({ darkMode, setDarkMode }) {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "8px",
-                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-                  transition: "transform 0.2s"
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.2)"
                 }}
               >
                 <FaRocket style={{ color: "#7c3aed" }} /> Connect API
@@ -191,18 +187,18 @@ function Dashboard({ darkMode, setDarkMode }) {
                 <FaServer />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Connect REST API</h4>
-                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Add & test API endpoints</p>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold", color: "var(--text-heading)" }}>Connect REST API</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>Add & test API endpoints</p>
               </div>
             </div>
 
             <div className="canva-action-card" onClick={() => navigate("/logs")}>
-              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #2563eb, #38bdf8)" }}>
+              <div className="canva-action-icon" style={{ background: "linear-gradient(135deg, #0284c7, #38bdf8)" }}>
                 <FaList />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Log Explorer</h4>
-                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Live telemetry & exports</p>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold", color: "var(--text-heading)" }}>Log Explorer</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>Live telemetry & exports</p>
               </div>
             </div>
 
@@ -211,8 +207,8 @@ function Dashboard({ darkMode, setDarkMode }) {
                 <FaMagic />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>AI Insights</h4>
-                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>ML predictions & forecast</p>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold", color: "var(--text-heading)" }}>AI Insights</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>ML predictions & forecast</p>
               </div>
             </div>
 
@@ -221,8 +217,8 @@ function Dashboard({ darkMode, setDarkMode }) {
                 <FaFilePdf />
               </div>
               <div>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold" }}>Executive Report</h4>
-                <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>Generate PDF reports</p>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "bold", color: "var(--text-heading)" }}>Executive Report</h4>
+                <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>Generate PDF reports</p>
               </div>
             </div>
           </div>
@@ -233,7 +229,7 @@ function Dashboard({ darkMode, setDarkMode }) {
               title="AI Telemetry Score"
               value={dashboard.score?.score || 95}
               decimals={0}
-              color="#7c3aed"
+              color="#a855f7"
               icon={<FaRobot />}
             />
             <MetricCard
@@ -262,25 +258,24 @@ function Dashboard({ darkMode, setDarkMode }) {
           {businessInsights && (
             <div
               style={{
-                backgroundColor: darkMode ? "rgba(30, 27, 75, 0.6)" : "rgba(238, 242, 255, 0.9)",
-                backdropFilter: "blur(12px)",
-                border: "1px solid",
-                borderColor: darkMode ? "#4338ca" : "#c7d2fe",
+                backgroundColor: "var(--bg-card)",
+                backdropFilter: "blur(16px)",
+                border: "1px solid var(--border-card)",
                 borderRadius: "20px",
                 padding: "20px 24px",
                 marginBottom: "32px",
                 display: "flex",
                 alignItems: "center",
                 gap: "16px",
-                boxShadow: "0 10px 25px -5px rgba(99, 102, 241, 0.1)"
+                boxShadow: "var(--shadow-card)"
               }}
             >
-              <FaBrain style={{ fontSize: "28px", color: "#6366f1", flexShrink: 0 }} />
+              <FaBrain style={{ fontSize: "28px", color: "#a855f7", flexShrink: 0 }} />
               <div>
-                <h4 style={{ margin: "0 0 4px 0", color: darkMode ? "#e0e7ff" : "#312e81", fontSize: "15px", fontWeight: "bold" }}>
+                <h4 style={{ margin: "0 0 4px 0", color: "var(--text-heading)", fontSize: "15px", fontWeight: "bold" }}>
                   AI Business Insight ({businessInsights.summary_title || "System Health"})
                 </h4>
-                <p style={{ margin: 0, fontSize: "14px", color: darkMode ? "#c7d2fe" : "#4338ca" }}>
+                <p style={{ margin: 0, fontSize: "14px", color: "var(--text-muted)" }}>
                   {businessInsights.plain_english_summary || "System operating efficiently with low latency and optimal throughput."}
                 </p>
               </div>

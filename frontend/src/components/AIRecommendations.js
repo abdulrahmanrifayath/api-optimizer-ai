@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getAiRecommendationHistory, updateRecommendationStatus } from "../services/aiService";
-import "./../styles/AIRecommendations.css";
 import {
   FaLightbulb,
   FaCheckCircle,
@@ -41,33 +40,35 @@ function AIRecommendations() {
   const getStatusBadgeStyle = (status) => {
     switch (status) {
       case "Accepted":
-        return { backgroundColor: "#dbeafe", color: "#1e40af" };
+        return { backgroundColor: "rgba(99, 102, 241, 0.2)", color: "#818cf8" };
       case "Applied":
-        return { backgroundColor: "#dcfce7", color: "#15803d" };
+        return { backgroundColor: "rgba(16, 185, 129, 0.2)", color: "#34d399" };
       case "Ignored":
-        return { backgroundColor: "#fee2e2", color: "#991b1b" };
+        return { backgroundColor: "rgba(239, 68, 68, 0.2)", color: "#f87171" };
       default:
-        return { backgroundColor: "#fef3c7", color: "#92400e" };
+        return { backgroundColor: "rgba(245, 158, 11, 0.2)", color: "#fbbf24" };
     }
   };
 
   if (loading) return null;
 
   return (
-    <div className="recommendation-panel" style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
-      <h2><FaLightbulb style={{ color: "#eab308", marginRight: "8px" }} /> AI Optimization Recommendations & Recommendation Engine</h2>
+    <div className="chart-card" style={{ marginBottom: "25px" }}>
+      <h2 style={{ fontSize: "18px", fontWeight: "800", marginBottom: "16px", display: "flex", alignItems: "center", gap: "10px", color: "var(--text-heading)" }}>
+        <FaLightbulb style={{ color: "#f59e0b" }} /> AI Optimization Recommendations & Recommendation Engine
+      </h2>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "15px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         {recommendations.map((item) => (
           <div
             key={item.id}
             style={{
-              padding: "16px",
-              borderRadius: "8px",
-              border: "1px solid #e5e7eb",
-              backgroundColor: "#f8fafc",
+              padding: "18px",
+              borderRadius: "16px",
+              border: "1px solid var(--border-card)",
+              backgroundColor: "var(--table-row-bg)",
               display: "flex",
-              justifyContent: "space-between",
+              justify-content: "space-between",
               alignItems: "center",
               flexWrap: "wrap",
               gap: "12px",
@@ -75,22 +76,22 @@ function AIRecommendations() {
           >
             <div style={{ flex: "1 1 300px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "2px 8px", borderRadius: "4px", backgroundColor: "#e0e7ff", color: "#3730a3" }}>
+                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "3px 10px", borderRadius: "20px", backgroundColor: "var(--bg-active)", color: "var(--text-active)" }}>
                   {item.category}
                 </span>
-                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "2px 8px", borderRadius: "4px", ...getStatusBadgeStyle(item.status) }}>
+                <span style={{ fontSize: "12px", fontWeight: "bold", padding: "3px 10px", borderRadius: "20px", ...getStatusBadgeStyle(item.status) }}>
                   {item.status}
                 </span>
               </div>
-              <h4 style={{ margin: "8px 0 4px 0", fontSize: "16px", color: "#1e293b" }}>{item.title}</h4>
-              <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>{item.impact}</p>
+              <h4 style={{ margin: "10px 0 4px 0", fontSize: "16px", fontWeight: "bold", color: "var(--text-heading)" }}>{item.title}</h4>
+              <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)" }}>{item.impact}</p>
             </div>
 
             <div style={{ display: "flex", gap: "8px" }}>
               {item.status !== "Accepted" && item.status !== "Applied" && (
                 <button
                   onClick={() => handleStatusChange(item.id, "Accepted")}
-                  style={btnActionStyle("#2563eb", "#ffffff")}
+                  style={btnActionStyle("#6366f1")}
                 >
                   <FaCheckCircle style={{ marginRight: "4px" }} /> Accept
                 </button>
@@ -98,7 +99,7 @@ function AIRecommendations() {
               {item.status !== "Applied" && (
                 <button
                   onClick={() => handleStatusChange(item.id, "Applied")}
-                  style={btnActionStyle("#16a34a", "#ffffff")}
+                  style={btnActionStyle("#10b981")}
                 >
                   <FaCheckDouble style={{ marginRight: "4px" }} /> Apply
                 </button>
@@ -106,7 +107,7 @@ function AIRecommendations() {
               {item.status !== "Ignored" && (
                 <button
                   onClick={() => handleStatusChange(item.id, "Ignored")}
-                  style={btnActionStyle("#9ca3af", "#ffffff")}
+                  style={btnActionStyle("#64748b")}
                 >
                   <FaTimesCircle style={{ marginRight: "4px" }} /> Ignore
                 </button>
@@ -119,17 +120,18 @@ function AIRecommendations() {
   );
 }
 
-const btnActionStyle = (bg, color) => ({
-  padding: "6px 12px",
+const btnActionStyle = (bg) => ({
+  padding: "8px 14px",
   backgroundColor: bg,
-  color: color,
+  color: "#ffffff",
   border: "none",
-  borderRadius: "6px",
+  borderRadius: "20px",
   cursor: "pointer",
   fontSize: "12px",
   fontWeight: "bold",
   display: "inline-flex",
   alignItems: "center",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
 });
 
 export default AIRecommendations;
