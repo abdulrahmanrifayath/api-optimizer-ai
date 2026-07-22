@@ -103,18 +103,15 @@ function Dashboard({ darkMode, setDarkMode }) {
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          fontSize: "20px",
+          fontSize: "18px",
           fontWeight: "bold",
-          color: "var(--text-active)",
-          gap: "15px"
+          color: "var(--text-main)",
         }}
       >
-        <div>✨ Loading Cyber Neon Glassmorphic Control Center...</div>
-        <div style={{ fontSize: "14px", color: "var(--text-muted)" }}>Fetching live API telemetry & AI models...</div>
+        Loading...
       </div>
     );
   }
@@ -127,14 +124,10 @@ function Dashboard({ darkMode, setDarkMode }) {
         <Sidebar />
 
         <main className="content">
-          {/* Cyber Neon Hero Banner */}
+          {/* Hero Banner */}
           <div className="hero-banner">
             <div>
-              <div className="live-indicator" style={{ marginBottom: "12px" }}>
-                <span className="pulse-dot"></span>
-                ✨ CYBER NEON VIOLET TELEMETRY • AUTO-REFRESH 5s
-              </div>
-              <h1 style={{ color: "#ffffff" }}>Create, Monitor & Optimize APIs Like Magic ✨</h1>
+              <h1 style={{ color: "#ffffff" }}>Monitor & Optimize APIs Like Magic ✨</h1>
               <p style={{ color: "#e9d5ff" }}>Real-time HTTP log ingestion, predictive ML traffic forecasting, and executive business reports.</p>
             </div>
 
