@@ -9,14 +9,28 @@ import "../styles/NotificationPanel.css";
 
 function NotificationPanel({ dashboard }) {
   const notifications = [];
+  const alerts = dashboard?.alerts || [];
+  const scoreVal = dashboard?.score?.score || 95;
+  const gradeVal = dashboard?.score?.grade || "A";
+  const errorRateVal = dashboard?.score?.metrics?.error_rate || 0;
+  const mostUsedEp = dashboard?.score?.metrics?.most_used_endpoint || "/api/v1/users";
 
   // No alerts
-  if (!dashboard.alerts || dashboard.alerts.length === 0) {
+  if (!alerts || alerts.length === 0) {
     notifications.push({
       type: "success",
       icon: <FaCheckCircle />,
       title: "API Health Excellent",
       message: "No active alerts detected.",
+    });
+  } else {
+    alerts.forEach(a => {
+      notifications.push({
+        type: a.severity === "High" ? "warning" : "info",
+        icon: <FaExclamationTriangle />,
+        title: a.title || "Telemetry Alert",
+        message: a.explanation || a.message || "Anomaly detected."
+      });
     });
   }
 
@@ -25,16 +39,16 @@ function NotificationPanel({ dashboard }) {
     type: "ai",
     icon: <FaRobot />,
     title: "AI Score",
-    message: `Current AI score is ${dashboard.score.score}/100 (${dashboard.score.grade})`,
+    message: `Current AI score is ${scoreVal}/100 (${gradeVal})`,
   });
 
   // Error Rate
-  if (dashboard.score.metrics.error_rate > 5) {
+  if (errorRateVal > 5) {
     notifications.push({
       type: "warning",
       icon: <FaExclamationTriangle />,
       title: "High Error Rate",
-      message: `Error rate is ${dashboard.score.metrics.error_rate}%`,
+      message: `Error rate is ${errorRateVal}%`,
     });
   }
 
@@ -43,7 +57,7 @@ function NotificationPanel({ dashboard }) {
     type: "info",
     icon: <FaInfoCircle />,
     title: "Most Used Endpoint",
-    message: dashboard.score.metrics.most_used_endpoint,
+    message: mostUsedEp,
   });
 
   return (
