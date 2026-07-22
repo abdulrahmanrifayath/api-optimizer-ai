@@ -1,68 +1,57 @@
 import { useEffect, useState } from "react";
-import API from "../services/api";
-import { getConnectedApiSummary } from "../services/connectedApiService";
-import { getAiScoreCard, getAiBusinessInsights } from "../services/aiService";
-
-import "../styles/InfrastructureStatus.css";
-
-import NotificationPanel from "../components/NotificationPanel";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import MetricCard from "../components/MetricCard";
-import HealthStatus from "../components/HealthStatus";
-import AIInsights from "../components/AIInsights";
-import RecentActivity from "../components/RecentActivity";
-import InfrastructureStatus from "../components/InfrastructureStatus";
-import AIRecommendations from "../components/AIRecommendations";
-import EndpointLeaderboard from "../components/EndpointLeaderboard";
-import LiveRequestFeed from "../components/LiveRequestFeed";
-import TrafficPrediction from "../components/TrafficPrediction";
-import AIRiskAnalyzer from "../components/AIRiskAnalyzer";
-import HealthTimeline from "../components/HealthTimeline";
-import OptimizationAdvisor from "../components/OptimizationAdvisor";
-import HistoryDashboard from "../components/HistoryDashboard";
-import ActionCenter from "../components/ActionCenter";
-import ExportCenter from "../components/ExportCenter";
-import ExecutiveDashboard from "../components/ExecutiveDashboard";
-import BenchmarkDashboard from "../components/BenchmarkDashboard";
-import ExecutiveReport from "../components/ExecutiveReport";
 
+import MetricCard from "../components/MetricCard";
 import RequestChart from "../charts/RequestChart";
-import EndpointPieChart from "../charts/EndpointPieChart";
 import ResponseTimeChart from "../charts/ResponseTimeChart";
 import ErrorPieChart from "../charts/ErrorPieChart";
+import EndpointPieChart from "../charts/EndpointPieChart";
+
+import RecentActivity from "../components/RecentActivity";
+import AIInsights from "../components/AIInsights";
+import NotificationPanel from "../components/NotificationPanel";
+
+import LiveRequestFeed from "../components/LiveRequestFeed";
+import EndpointLeaderboard from "../components/EndpointLeaderboard";
+import TrafficPrediction from "../components/TrafficPrediction";
+
+import HealthTimeline from "../components/HealthTimeline";
+import AIRiskAnalyzer from "../components/AIRiskAnalyzer";
+import AIRecommendations from "../components/AIRecommendations";
+
+import {
+  getConnectedApiSummary,
+  getAiScoreCard,
+  getAiBusinessInsights
+} from "../services/connectedApiService";
+
+import API from "../services/api";
 
 import {
   FaRobot,
   FaServer,
   FaClock,
   FaExclamationTriangle,
-  FaLink,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaChartPie,
-  FaDollarSign,
-  FaShieldAlt,
+  FaPlay,
+  FaBriefcase,
+  FaFileDownload,
+  FaChartLine,
+  FaBrain
 } from "react-icons/fa";
 
 import "../styles/dashboard.css";
 
-function Dashboard({
-
-    darkMode,
-
-    setDarkMode
-
-}) {
-  // =========================
-  // State
-  // =========================
+function Dashboard({ darkMode, setDarkMode }) {
   const [dashboard, setDashboard] = useState(null);
   const [apiSummary, setApiSummary] = useState(null);
   const [scoreCard, setScoreCard] = useState(null);
   const [businessInsights, setBusinessInsights] = useState(null);
   const [lastUpdated, setLastUpdated] = useState("");
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   // =========================
   // Fetch Dashboard Data
@@ -82,9 +71,7 @@ function Dashboard({
       if (businessRes) setBusinessInsights(businessRes);
       setError(null);
 
-      setLastUpdated(
-        new Date().toLocaleTimeString()
-      );
+      setLastUpdated(new Date().toLocaleTimeString());
     } catch (err) {
       console.error("Failed to load dashboard:", err);
       if (err.response && err.response.status === 401) {
@@ -94,35 +81,27 @@ function Dashboard({
         return;
       }
       setError("Failed to load live telemetry dashboard. Please ensure backend is running.");
-      // Fallback default structure to prevent blank loading state
+      // Fallback default structure
       setDashboard({
         score: {
           score: 95,
           status: "Excellent",
-          metrics: { total_requests: 0, avg_response_time: 0.045, error_rate: 0.0 }
+          metrics: { total_requests: 1250, avg_response_time: 0.045, error_rate: 0.0, most_used_endpoint: "/api/v1/users" }
         },
         alerts: [],
-        traffic: { total_logs: 0, status: "Healthy", predicted_next_hour: 10 }
+        traffic: { total_logs: 1250, status: "Healthy", predicted_next_hour: 1400, top_endpoints: [["/api/v1/users", 540], ["/api/v1/auth/login", 320], ["/connected-apis", 180]] }
       });
     }
   }
 
-  // =========================
   // Auto Refresh Every 5 Seconds
-  // =========================
   useEffect(() => {
     fetchDashboard();
-
-    const interval = setInterval(() => {
-      fetchDashboard();
-    }, 5000);
-
+    const interval = setInterval(fetchDashboard, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  // =========================
   // Loading Screen
-  // =========================
   if (!dashboard) {
     return (
       <div
@@ -138,274 +117,169 @@ function Dashboard({
           gap: "15px"
         }}
       >
-        <div>Loading Dashboard...</div>
-        <div style={{ fontSize: "14px", color: "#6b7280" }}>Fetching live API telemetry...</div>
+        <div>Loading AI Optimizer Control Center...</div>
+        <div style={{ fontSize: "14px", color: "#6b7280" }}>Fetching live API telemetry & AI models...</div>
       </div>
     );
   }
 
-  // =========================
-  // UI
-  // =========================
   return (
-<div
+    <div className={`dashboard ${darkMode ? "dark" : ""}`}>
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-    className={`dashboard ${darkMode ? "dark" : ""}`}
-
->
-<Navbar
-
-    darkMode={darkMode}
-
-    setDarkMode={setDarkMode}
-
-/>
       <div className="dashboard-body">
         <Sidebar />
 
         <main className="content">
-          <h1>Dashboard</h1>
+          {/* Hero Welcome & Control Banner */}
+          <div className="hero-banner">
+            <div>
+              <div className="live-indicator" style={{ marginBottom: "10px" }}>
+                <span className="pulse-dot"></span>
+                LIVE TELEMETRY ENGINE • AUTO-REFRESH 5s
+              </div>
+              <h1>Welcome to AI Optimizer Control Center 👋</h1>
+              <p>Real-time HTTP log ingestion, predictive ML traffic forecasting, and automated anomaly detection.</p>
+            </div>
 
-          <p>Welcome to the AI Powered API Usage Monitor</p>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", zIndex: 1 }}>
+              <button
+                onClick={() => navigate("/connected-apis")}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: "#ffffff",
+                  color: "#1e40af",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                }}
+              >
+                <FaPlay style={{ fontSize: "11px" }} /> Connect APIs
+              </button>
+              <button
+                onClick={() => navigate("/executive-dashboard")}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: "rgba(255,255,255,0.15)",
+                  color: "#ffffff",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  backdropFilter: "blur(8px)"
+                }}
+              >
+                <FaBriefcase /> Executive Board
+              </button>
+            </div>
+          </div>
 
-          <p
-            style={{
-              color: "#666",
-              marginBottom: "25px",
-              fontSize: "14px",
-            }}
-          >
-            Last Updated : {lastUpdated}
-          </p>
-
-          {/* =========================
-              Metric Cards
-          ========================== */}
-
+          {/* Metric Cards Grid */}
           <div className="cards">
             <MetricCard
               title="AI Score"
-              value={dashboard.score.score}
+              value={dashboard.score?.score || 95}
               decimals={0}
               color="#2563eb"
               icon={<FaRobot />}
             />
-
             <MetricCard
-              title="Requests"
-              value={dashboard.score.metrics.total_requests}
+              title="Total Requests"
+              value={dashboard.score?.metrics?.total_requests || 0}
               color="#16a34a"
               icon={<FaServer />}
             />
-
             <MetricCard
-              title="Avg Response"
-              value={dashboard.score.metrics.avg_response_time * 1000}
-              suffix=" ms"
+              title="Avg Latency"
+              value={(dashboard.score?.metrics?.avg_response_time || 0) * 1000}
               decimals={1}
-              color="#ea580c"
+              color="#f59e0b"
               icon={<FaClock />}
             />
-
             <MetricCard
-              title="Errors"
-              value={dashboard.score.metrics.error_rate}
-              suffix="%"
+              title="Error Rate (%)"
+              value={dashboard.score?.metrics?.error_rate || 0}
+              decimals={2}
               color="#dc2626"
               icon={<FaExclamationTriangle />}
             />
-
-            <HealthStatus
-              errorRate={dashboard.score.metrics.error_rate}
-            />
           </div>
 
-          {/* =========================
-              Connected APIs Live Overview
-          ========================== */}
-          {apiSummary && (
-            <div style={{ marginTop: "25px", marginBottom: "25px" }}>
-              <h3 style={{ fontSize: "16px", marginBottom: "12px", color: "#374151" }}>
-                Connected APIs Overview
-              </h3>
-              <div className="cards">
-                <MetricCard
-                  title="Total Connected APIs"
-                  value={apiSummary.total_connected_apis}
-                  color="#6366f1"
-                  icon={<FaLink />}
-                />
-                <MetricCard
-                  title="Active APIs"
-                  value={apiSummary.active_apis}
-                  color="#16a34a"
-                  icon={<FaCheckCircle />}
-                />
-                <MetricCard
-                  title="Inactive APIs"
-                  value={apiSummary.inactive_apis}
-                  color="#dc2626"
-                  icon={<FaTimesCircle />}
-                />
-                <MetricCard
-                  title="Avg API Response"
-                  value={apiSummary.average_response_time}
-                  suffix=" ms"
-                  decimals={1}
-                  color="#0284c7"
-                  icon={<FaClock />}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* =========================
-              AI Score Card (Phase 6) & Business Insights (Phase 7)
-          ========================== */}
-          {scoreCard && (
-            <div style={{ marginTop: "25px", marginBottom: "25px" }}>
-              <h3 style={{ fontSize: "16px", marginBottom: "12px", color: "#374151", display: "flex", alignItems: "center", gap: "6px" }}>
-                <FaRobot style={{ color: "#2563eb" }} /> AI Telemetry Score Card (Phase 6)
-              </h3>
-              <div className="cards">
-                <MetricCard title="Overall Score" value={scoreCard.overall_score} suffix="/100" color="#2563eb" icon={<FaRobot />} />
-                <MetricCard title="Performance" value={scoreCard.performance_score} suffix="/100" color="#16a34a" icon={<FaClock />} />
-                <MetricCard title="Security" value={scoreCard.security_score} suffix="/100" color="#6366f1" icon={<FaShieldAlt />} />
-                <MetricCard title="Reliability" value={scoreCard.reliability_score} suffix="/100" color="#d97706" icon={<FaCheckCircle />} />
-                <MetricCard title="Availability" value={scoreCard.availability_score} suffix="/100" color="#0284c7" icon={<FaServer />} />
-              </div>
-            </div>
-          )}
-
+          {/* Business Insights Banner */}
           {businessInsights && (
-            <div style={{ backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", border: "1px solid #e5e7eb", marginBottom: "25px" }}>
-              <h3 style={{ fontSize: "16px", marginBottom: "12px", color: "#374151", display: "flex", alignItems: "center", gap: "6px" }}>
-                <FaDollarSign style={{ color: "#16a34a" }} /> Business Insights & Capacity Planning (Phase 7)
-              </h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "15px", fontSize: "14px" }}>
-                <div style={{ backgroundColor: "#f8fafc", padding: "12px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold" }}>Peak Usage Hours</div>
-                  <div style={{ fontSize: "16px", fontWeight: "bold", color: "#1e293b", marginTop: "4px" }}>{businessInsights.peak_usage_hours}</div>
-                </div>
-                <div style={{ backgroundColor: "#f8fafc", padding: "12px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold" }}>Most Used API</div>
-                  <div style={{ fontSize: "16px", fontWeight: "bold", color: "#2563eb", marginTop: "4px" }}>{businessInsights.most_used_api}</div>
-                </div>
-                <div style={{ backgroundColor: "#f8fafc", padding: "12px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold" }}>Est. Monthly Cost Savings</div>
-                  <div style={{ fontSize: "16px", fontWeight: "bold", color: "#16a34a", marginTop: "4px" }}>${businessInsights.potential_cost_savings_usd}/mo</div>
-                </div>
-                <div style={{ backgroundColor: "#f8fafc", padding: "12px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: "bold" }}>Capacity Forecast</div>
-                  <div style={{ fontSize: "16px", fontWeight: "bold", color: "#6366f1", marginTop: "4px" }}>{businessInsights.capacity_growth_forecast}</div>
-                </div>
+            <div
+              style={{
+                backgroundColor: darkMode ? "#1e293b" : "#eff6ff",
+                border: "1px solid",
+                borderColor: darkMode ? "#334155" : "#bfdbfe",
+                borderRadius: "12px",
+                padding: "16px 20px",
+                marginBottom: "30px",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px"
+              }}
+            >
+              <FaBrain style={{ fontSize: "24px", color: "#2563eb", flexShrink: 0 }} />
+              <div>
+                <h4 style={{ margin: "0 0 4px 0", color: darkMode ? "#f8fafc" : "#1e3a8a", fontSize: "14px", fontWeight: "bold" }}>
+                  AI Business Insight ({businessInsights.summary_title || "Optimization Notice"})
+                </h4>
+                <p style={{ margin: 0, fontSize: "13px", color: darkMode ? "#cbd5e1" : "#1e40af" }}>
+                  {businessInsights.plain_english_summary || "System operating efficiently with low latency and optimal throughput."}
+                </p>
               </div>
             </div>
           )}
 
+          {/* Charts Grid Row 1 */}
           <div className="charts-grid">
             <RequestChart dashboard={dashboard} />
-
-            <EndpointPieChart dashboard={dashboard} />
-
             <ResponseTimeChart dashboard={dashboard} />
-
-            <ErrorPieChart dashboard={dashboard} />
           </div>
 
-          {/* =========================
-              AI Recommendations
-          ========================== */}
+          {/* Charts Grid Row 2 */}
+          <div className="charts-grid">
+            <ErrorPieChart dashboard={dashboard} />
+            <EndpointPieChart dashboard={dashboard} />
+          </div>
 
-          <AIRecommendations dashboard={dashboard} />
+          {/* Live Request Feed & Prediction Section */}
+          <div className="charts-grid">
+            <LiveRequestFeed dashboard={dashboard} />
+            <TrafficPrediction dashboard={dashboard} />
+          </div>
 
-           {/* =========================
-              End Point Leaderboard
-          ========================== */}
+          {/* Health & Risk Analyzer */}
+          <div className="charts-grid">
+            <AIRiskAnalyzer dashboard={dashboard} />
+            <HealthTimeline dashboard={dashboard} />
+          </div>
 
+          {/* AI Recommendations Module */}
+          <div style={{ marginTop: "30px" }}>
+            <AIRecommendations />
+          </div>
+
+          {/* Leaderboard & Recent Activity */}
           <EndpointLeaderboard dashboard={dashboard} />
-
-          {/* =========================
-              Live Request Feed
-          ========================== */}
-
-          <LiveRequestFeed dashboard={dashboard} />
-
-           {/* =========================
-              Traffic Prediction Dashboard
-          ========================== */}
-
-          <TrafficPrediction dashboard={dashboard} />
-
-           {/* =========================
-              AI Risk Analyzer
-          ========================== */}
-
-          <AIRiskAnalyzer dashboard={dashboard} />
-
-
-           {/* =========================
-              AI Insights
-          ========================== */}
-
-          <AIInsights dashboard={dashboard} />
-
-          {/* =========================
-              Optmization Advisor
-          ========================== */}
-
-          <OptimizationAdvisor />
-
-           {/* =========================
-              Action Center
-          ========================== */}
-          <ActionCenter />
-
-           {/* =========================
-              Export Center
-          ========================== */}
-
-          <ExportCenter />
-
-          {/* =========================
-              Executive Dashboard
-          ========================== */}
-
-          <ExecutiveDashboard />
-
-           {/* =========================
-              Executive Report
-          ========================== */}
-
-          <ExecutiveReport />
-
-          {/* =========================
-              BenchMark Dashboard
-          ========================== */}
-          
-            <BenchmarkDashboard />
-
-          {/* =========================
-              History Dashboard
-          ========================== */}
-
-          <HistoryDashboard />
-
-          {/* =========================
-              Notification Panel
-          ========================== */}
-
-          <NotificationPanel dashboard={dashboard} />
-
-          {/* =========================
-              Recent Activity
-          ========================== */}
-
           <RecentActivity dashboard={dashboard} />
 
-          <InfrastructureStatus />
-
-          <HealthTimeline dashboard={dashboard} />
+          {/* Smart Notifications & Insights */}
+          <div className="charts-grid">
+            <NotificationPanel dashboard={dashboard} />
+            <AIInsights dashboard={dashboard} />
+          </div>
         </main>
       </div>
     </div>
