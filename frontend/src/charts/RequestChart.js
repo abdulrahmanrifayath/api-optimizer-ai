@@ -9,16 +9,15 @@ import {
 } from "recharts";
 
 function RequestChart({ dashboard }) {
-
-  const total = dashboard.score.metrics.total_requests;
+  const total = dashboard?.score?.metrics?.total_requests || 100;
 
   const data = [
-    { day: "Mon", requests: total * 0.20 },
-    { day: "Tue", requests: total * 0.35 },
-    { day: "Wed", requests: total * 0.45 },
-    { day: "Thu", requests: total * 0.60 },
-    { day: "Fri", requests: total * 0.75 },
-    { day: "Sat", requests: total * 0.90 },
+    { day: "Mon", requests: Math.round(total * 0.20) },
+    { day: "Tue", requests: Math.round(total * 0.35) },
+    { day: "Wed", requests: Math.round(total * 0.45) },
+    { day: "Thu", requests: Math.round(total * 0.60) },
+    { day: "Fri", requests: Math.round(total * 0.75) },
+    { day: "Sat", requests: Math.round(total * 0.90) },
     { day: "Today", requests: total }
   ];
 

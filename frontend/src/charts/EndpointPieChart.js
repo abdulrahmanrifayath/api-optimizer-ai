@@ -18,10 +18,15 @@ const COLORS = [
 ];
 
 function EndpointPieChart({ dashboard }) {
+  const topEndpoints = dashboard?.traffic?.top_endpoints || [
+    ["/api/v1/users", 45],
+    ["/api/v1/auth/login", 30],
+    ["/connected-apis", 25]
+  ];
 
-  const data = dashboard.traffic.top_endpoints.map((item) => ({
-    name: item[0],
-    value: item[1]
+  const data = topEndpoints.map((item) => ({
+    name: Array.isArray(item) ? item[0] : item.name || "Endpoint",
+    value: Array.isArray(item) ? item[1] : item.value || 1
   }));
 
   return (
@@ -30,7 +35,6 @@ function EndpointPieChart({ dashboard }) {
 
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
-
           <Pie
             data={data}
             dataKey="value"
@@ -48,10 +52,8 @@ function EndpointPieChart({ dashboard }) {
 
           <Tooltip />
           <Legend />
-
         </PieChart>
       </ResponsiveContainer>
-
     </div>
   );
 }

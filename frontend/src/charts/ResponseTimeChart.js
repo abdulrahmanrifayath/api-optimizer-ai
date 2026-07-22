@@ -9,12 +9,12 @@ import {
 } from "recharts";
 
 function ResponseTimeChart({ dashboard }) {
-
-  const avg = dashboard.score.metrics.avg_response_time;
+  const avg = dashboard?.score?.metrics?.avg_response_time || 0.045;
+  const endpointName = dashboard?.score?.metrics?.most_used_endpoint || "/api/v1/users";
 
   const data = [
     {
-      api: dashboard.score.metrics.most_used_endpoint,
+      api: endpointName,
       ms: Number((avg * 1000).toFixed(2))
     }
   ];
@@ -29,15 +29,9 @@ function ResponseTimeChart({ dashboard }) {
           <XAxis dataKey="api" />
           <YAxis />
           <Tooltip />
-
-          <Bar
-            dataKey="ms"
-            fill="#16a34a"
-          />
-
+          <Bar dataKey="ms" fill="#16a34a" />
         </BarChart>
       </ResponsiveContainer>
-
     </div>
   );
 }

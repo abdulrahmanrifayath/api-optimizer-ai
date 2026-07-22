@@ -13,8 +13,7 @@ const COLORS = [
 ];
 
 function ErrorPieChart({ dashboard }) {
-
-  const errorRate = dashboard.score.metrics.error_rate;
+  const errorRate = dashboard?.score?.metrics?.error_rate || 0.0;
 
   const data = [
     {
@@ -29,12 +28,10 @@ function ErrorPieChart({ dashboard }) {
 
   return (
     <div className="chart-card">
-
       <h3>🚨 Error Distribution</h3>
 
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
-
           <Pie
             data={data}
             dataKey="value"
@@ -51,10 +48,8 @@ function ErrorPieChart({ dashboard }) {
 
           <Tooltip />
           <Legend />
-
         </PieChart>
       </ResponsiveContainer>
-
     </div>
   );
 }
