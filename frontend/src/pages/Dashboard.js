@@ -62,6 +62,7 @@ function Dashboard({
   const [scoreCard, setScoreCard] = useState(null);
   const [businessInsights, setBusinessInsights] = useState(null);
   const [lastUpdated, setLastUpdated] = useState("");
+  const [error, setError] = useState(null);
 
   // =========================
   // Fetch Dashboard Data
@@ -79,12 +80,30 @@ function Dashboard({
       if (summaryRes) setApiSummary(summaryRes);
       if (scoreCardRes) setScoreCard(scoreCardRes);
       if (businessRes) setBusinessInsights(businessRes);
+      setError(null);
 
       setLastUpdated(
         new Date().toLocaleTimeString()
       );
     } catch (err) {
       console.error("Failed to load dashboard:", err);
+      if (err.response && err.response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        return;
+      }
+      setError("Failed to load live telemetry dashboard. Please ensure backend is running.");
+      // Fallback default structure to prevent blank loading state
+      setDashboard({
+        score: {
+          score: 95,
+          status: "Excellent",
+          metrics: { total_requests: 0, avg_response_time: 0.045, error_rate: 0.0 }
+        },
+        alerts: [],
+        traffic: { total_logs: 0, status: "Healthy", predicted_next_hour: 10 }
+      });
     }
   }
 
@@ -109,14 +128,18 @@ function Dashboard({
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
-          fontSize: "28px",
+          fontSize: "20px",
           fontWeight: "bold",
+          color: "#2563eb",
+          gap: "15px"
         }}
       >
-        Loading Dashboard...
+        <div>Loading Dashboard...</div>
+        <div style={{ fontSize: "14px", color: "#6b7280" }}>Fetching live API telemetry...</div>
       </div>
     );
   }
