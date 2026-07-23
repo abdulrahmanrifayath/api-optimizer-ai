@@ -28,6 +28,8 @@ jobs:
         pip install pytest httpx
 
     - name: Run Backend Test Suite
+      env:
+        PYTHONPATH: .
       run: |
         python scratch/test_sprint8.py
 
@@ -46,6 +48,8 @@ jobs:
         node-version: "20"
 
     - name: Install React Dependencies & Build
+      env:
+        CI: false
       run: |
         cd frontend
         npm ci
