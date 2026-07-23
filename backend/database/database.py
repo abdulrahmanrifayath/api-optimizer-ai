@@ -11,12 +11,9 @@ dotenv_path = BASE_DIR / ".env"
 
 load_dotenv(dotenv_path=dotenv_path)
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
 print("[DATABASE] URL USED:", DATABASE_URL)
-
-if not DATABASE_URL:
-    raise Exception("DATABASE_URL not found in .env file")
 
 connect_args = {}
 
