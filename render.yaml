@@ -1,9 +1,3 @@
-databases:
-  - name: api-optimizer-ai-db
-    databaseName: apioptimizer
-    user: apioptimizer
-    plan: free
-
 services:
   - type: web
     name: api-optimizer-ai-backend
@@ -19,17 +13,16 @@ services:
       - key: PYTHONPATH
         value: "."
       - key: DATABASE_URL
-        fromDatabase:
-          name: api-optimizer-ai-db
-          property: connectionString
+        value: "sqlite:///./app.db"
       - key: CORS_ORIGINS
         value: "*"
 
   - type: web
     name: api-optimizer-ai-frontend
     env: static
-    buildCommand: "cd frontend && npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true npm run build"
-    staticPublishPath: "./frontend/build"
+    rootDir: frontend
+    buildCommand: "npm install --legacy-peer-deps && DISABLE_ESLINT_PLUGIN=true npm run build"
+    staticPublishPath: "build"
     routes:
       - type: rewrite
         source: "/*"
