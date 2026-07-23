@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://127.0.0.1:8000",
+    baseURL: process.env.REACT_APP_API_URL || "https://api-optimizer-ai-backend.onrender.com",
 });
 
 API.interceptors.request.use(
