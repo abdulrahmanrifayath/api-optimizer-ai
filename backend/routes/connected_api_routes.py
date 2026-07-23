@@ -113,6 +113,8 @@ def create_connected_api(
         name=api.name,
         base_url=str(api.base_url),
         description=api.description,
+        api_key=api.api_key,
+        auth_header=api.auth_header or "Authorization",
         status="Healthy",
         user_id=current_user.id
     )
@@ -158,13 +160,9 @@ def get_connected_apis(
         query = query.order_by(ConnectedAPI.created_at.desc())
 
     total_items = query.count()
-    total_pages = max(1, (total_items + limit - 1) // limit)
+    total_pages = (total_items + limit - 1) // limit if total_items > 0 else 1
 
-    items = (
-        query.offset((page - 1) * limit)
-        .limit(limit)
-        .all()
-    )
+    items = query.offset((page - 1) * limit).limit(limit).all()
 
     return ConnectedAPIPaginatedResponse(
         items=items,
@@ -192,7 +190,7 @@ def update_connected_api(
     )
 
     if not api:
-        raise HTTPException(status_code=404, detail="Connected API not found.")
+        raise HTTPException(status_code=404, detail="Connected API not found")
 
     if api_update.name is not None:
         api.name = api_update.name
@@ -200,6 +198,10 @@ def update_connected_api(
         api.base_url = str(api_update.base_url)
     if api_update.description is not None:
         api.description = api_update.description
+    if api_update.api_key is not None:
+        api.api_key = api_update.api_key
+    if api_update.auth_header is not None:
+        api.auth_header = api_update.auth_header
 
     db.commit()
     db.refresh(api)
@@ -222,11 +224,11 @@ def delete_connected_api(
     )
 
     if not api:
-        raise HTTPException(status_code=404, detail="Connected API not found.")
+        raise HTTPException(status_code=404, detail="Connected API not found")
 
     db.delete(api)
     db.commit()
-    return {"message": "API deleted successfully."}
+    return {"message": "API connection deleted successfully"}
 
 
 # =========================
@@ -255,11 +257,10 @@ def update_api_status(
 
 
 # =========================
-# ADVANCED API CONNECTIVITY TEST (POST /connected-apis/{id}/test & POST /connected-apis/test/{id})
+# TEST / PROBE API CONNECTION
 # =========================
 @router.post("/{api_id}/test", response_model=TestConnectionResponse)
-@router.post("/test/{api_id}", response_model=TestConnectionResponse)
-def test_api_connection(
+def test_api_connection_route(
     api_id: int,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
@@ -271,12 +272,12 @@ def test_api_connection(
     )
 
     if not api:
-        raise HTTPException(status_code=404, detail="Connected API not found.")
+        raise HTTPException(status_code=404, detail="Connected API not found")
 
     checked_at_dt = datetime.utcnow()
-    checked_at_str = checked_at_dt.isoformat()
+    checked_at_str = checked_at_dt.strftime("%Y-%m-%d %H:%M:%S")
 
-    # 1. DNS Resolution check
+    # DNS Resolution check
     parsed = urlparse(api.base_url)
     hostname = parsed.hostname or api.base_url.replace("https://", "").replace("http://", "").split("/")[0]
 
@@ -298,11 +299,18 @@ def test_api_connection(
     # 2. HTTP Request execution & SSL Verification
     start_time = time.time()
     ssl_ok = True
+    req_headers = {"User-Agent": "API-Optimizer-AI/2.0 Health Monitor"}
+    if api.api_key:
+        if api.auth_header and api.auth_header.lower() != "authorization":
+            req_headers[api.auth_header] = api.api_key
+        else:
+            req_headers["Authorization"] = f"Bearer {api.api_key}" if not api.api_key.startswith("Bearer ") else api.api_key
+
     try:
         response = requests.get(
             api.base_url,
             timeout=6.0,
-            headers={"User-Agent": "API-Optimizer-AI/2.0 Health Monitor"}
+            headers=req_headers
         )
         elapsed_ms = round((time.time() - start_time) * 1000, 2)
         status_code = response.status_code

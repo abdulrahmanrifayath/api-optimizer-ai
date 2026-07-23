@@ -7,12 +7,16 @@ class ConnectedAPICreate(BaseModel):
     name: str
     base_url: HttpUrl
     description: Optional[str] = None
+    api_key: Optional[str] = None
+    auth_header: Optional[str] = "Authorization"
 
 
 class ConnectedAPIUpdate(BaseModel):
     name: Optional[str] = None
     base_url: Optional[HttpUrl] = None
     description: Optional[str] = None
+    api_key: Optional[str] = None
+    auth_header: Optional[str] = None
 
 
 class ConnectedAPIStatusUpdate(BaseModel):
@@ -24,6 +28,8 @@ class ConnectedAPIResponse(BaseModel):
     name: str
     base_url: str
     description: Optional[str]
+    api_key: Optional[str] = None
+    auth_header: Optional[str] = "Authorization"
     status: str
     last_checked: Optional[datetime] = None
     latency: float = 0.0

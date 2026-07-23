@@ -42,7 +42,7 @@ function ConnectedApis({ darkMode, setDarkMode }) {
     const [limit, setLimit] = useState(10);
 
     // Add / Edit Form State
-    const [form, setForm] = useState({ name: "", base_url: "", description: "" });
+    const [form, setForm] = useState({ name: "", base_url: "", description: "", api_key: "", auth_header: "Authorization" });
     const [editingId, setEditingId] = useState(null);
 
     // Testing & Telemetry modal state
@@ -100,16 +100,16 @@ function ConnectedApis({ darkMode, setDarkMode }) {
         try {
             if (editingId) {
                 await updateConnectedApi(editingId, form);
-                showToast("Connected API updated successfully");
+                showToast("API connection updated successfully!");
             } else {
                 await createConnectedApi(form);
-                showToast("New REST API connected successfully");
+                showToast("API connection added successfully!");
             }
-            setForm({ name: "", base_url: "", description: "" });
+            setForm({ name: "", base_url: "", description: "", api_key: "", auth_header: "Authorization" });
             setEditingId(null);
             loadData();
         } catch (err) {
-            showToast(err.response?.data?.detail || "Operation failed", "error");
+            showToast(err.response?.data?.detail || "Failed to save API connection", "error");
         }
     };
 
@@ -279,11 +279,18 @@ function ConnectedApis({ darkMode, setDarkMode }) {
                                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                                 style={inputStyle}
                             />
+                            <input
+                                placeholder="API Key / Secret Token (optional)"
+                                type="password"
+                                value={form.api_key || ""}
+                                onChange={(e) => setForm({ ...form, api_key: e.target.value })}
+                                style={inputStyle}
+                            />
                             <button type="submit" style={btnPrimaryStyle}>
                                 {editingId ? "Update API" : "Add API"}
                             </button>
                             {editingId && (
-                                <button type="button" onClick={() => { setEditingId(null); setForm({ name: "", base_url: "", description: "" }); }} style={btnSecondaryStyle}>
+                                <button type="button" onClick={() => { setEditingId(null); setForm({ name: "", base_url: "", description: "", api_key: "", auth_header: "Authorization" }); }} style={btnSecondaryStyle}>
                                     Cancel
                                 </button>
                             )}
