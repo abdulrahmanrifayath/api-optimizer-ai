@@ -13,6 +13,9 @@ load_dotenv(dotenv_path=dotenv_path)
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 print("[DATABASE] URL USED:", DATABASE_URL)
 
 connect_args = {}

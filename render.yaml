@@ -19,7 +19,9 @@ services:
       - key: PYTHONPATH
         value: "."
       - key: DATABASE_URL
-        value: "sqlite:///./app.db"
+        fromDatabase:
+          name: api-optimizer-ai-db
+          property: connectionString
       - key: CORS_ORIGINS
         value: "*"
 
